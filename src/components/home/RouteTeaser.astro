@@ -1,0 +1,102 @@
+﻿---
+import type { Ruta, Destino } from '../../lib/content';
+import { difficultyMeta } from '../../lib/content';
+import { cn } from '../../lib/utils';
+import Button from '../ui/Button.astro';
+import Icon from '../ui/Icon.astro';
+
+interface Props {
+	rutas: Ruta[];
+	destinos: Destino[];
+}
+
+const { rutas, destinos } = Astro.props;
+const byId = new Map(destinos.map((destino) => [destino.id, destino]));
+const items = rutas.slice(0, 4);
+---
+
+<section class="container-page py-section">
+	<div class="relative isolate overflow-hidden rounded-panel bg-[#0b1a13] text-[#f7f5ee]">
+		<svg
+			class="pointer-events-none absolute inset-0 -z-10 h-full w-full opacity-[0.18]"
+			viewBox="0 0 800 600"
+			aria-hidden="true"
+			preserveAspectRatio="xMidYMid slice"
+		>
+			<g fill="none" stroke="#8fc7a8" stroke-width="1.1">
+				<path d="M-40 420c120-70 180-10 260-60s120-140 220-120 160 90 260 40 120-10 160 20" />
+				<path d="M-40 460c120-70 180-10 260-60s120-140 220-120 160 90 260 40 120-10 160 20" />
+				<path d="M-40 500c120-70 180-10 260-60s120-140 220-120 160 90 260 40 120-10 160 20" />
+				<path d="M-40 340c120-70 180-10 260-60s120-140 220-120 160 90 260 40 120-10 160 20" />
+				<path d="M-40 260c120-70 180-10 260-60s120-140 220-120 160 90 260 40 120-10 160 20" />
+			</g>
+			<g fill="none" stroke="#e3b25c" stroke-width="1">
+				<circle cx="600" cy="150" r="70" />
+				<circle cx="600" cy="150" r="110" />
+				<circle cx="600" cy="150" r="150" />
+			</g>
+		</svg>
+
+		<div class="grid gap-10 p-7 sm:p-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-14 lg:p-14">
+			<div class="flex flex-col justify-between gap-8">
+				<div>
+					<p class="eyebrow text-[#e3b25c]">Rutas e itinerarios</p>
+					<h2 class="mt-4 max-w-md text-h2 font-medium text-[#f7f5ee]">
+						Un mapa para decidir, no para correr.
+					</h2>
+					<p class="mt-4 max-w-md text-body text-[#f7f5ee]/70">
+						Siete rutas con dificultad, duración, distancia y un itinerario día por día. Toca un punto
+						del mapa o revisa la ficha completa.
+					</p>
+				</div>
+				<div class="flex flex-wrap gap-3">
+					<Button href="/rutas" variant="inverse" icon="arrow-right">Ver el mapa</Button>
+					<Button href="/contacto" variant="outline-light">
+						Armar mi viaje
+					</Button>
+				</div>
+			</div>
+
+			<ul class="divide-y divide-[#f7f5ee]/12 border-y border-[#f7f5ee]/12">
+				{
+					items.map((ruta, index) => {
+						const destino = byId.get(ruta.data.destination);
+						const difficulty = difficultyMeta[ruta.data.difficulty];
+						return (
+							<li>
+								<a
+									href={`/rutas#${ruta.id}`}
+									class="group flex items-center gap-4 py-4 transition-colors hover:text-[#8fc7a8]"
+								>
+									<span class="w-5 font-display text-sm text-[#8fc7a8]/70">
+										{String(index + 1).padStart(2, '0')}
+									</span>
+									<span class="min-w-0 flex-1">
+										<span class="block truncate font-display text-lg leading-tight text-[#f7f5ee] group-hover:text-[#8fc7a8]">
+											{destino?.data.title ?? ruta.data.title}
+										</span>
+										<span class="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.72rem] text-[#f7f5ee]/55">
+											<span>{ruta.data.distanceKm} km</span>
+											<span class="size-0.5 rounded-full bg-[#f7f5ee]/40"></span>
+											<span>{ruta.data.durationDays} días</span>
+											<span class="size-0.5 rounded-full bg-[#f7f5ee]/40"></span>
+											<span class={cn('font-semibold', difficulty.dot === 'bg-accent' ? 'text-[#e08a5f]' : 'text-[#8fc7a8]')}>
+												{difficulty.label}
+											</span>
+										</span>
+									</span>
+									<Icon
+										name="arrow-up-right"
+										size={18}
+										class="shrink-0 text-[#f7f5ee]/40 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[#8fc7a8]"
+									/>
+								</a>
+							</li>
+						);
+					})
+				}
+			</ul>
+		</div>
+	</div>
+</section>
+

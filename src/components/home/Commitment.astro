@@ -1,0 +1,87 @@
+---
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Icon from '../ui/Icon.astro';
+
+interface Props {
+	image: ImageMetadata;
+	alt: string;
+}
+
+const { image, alt } = Astro.props;
+
+const commitments = [
+	{
+		title: 'Grupos pequeños',
+		text: 'Máximo diez personas por salida. Menos impacto, más conversación.',
+		icon: 'users' as const,
+	},
+	{
+		title: 'Compras locales',
+		text: 'Alojamiento, comida y guianza se contratan en la vereda.',
+		icon: 'leaf' as const,
+	},
+	{
+		title: 'Senderos que siguen',
+		text: 'No abrimos trochas nuevas: usamos los caminos que ya existen.',
+		icon: 'route' as const,
+	},
+];
+---
+
+<section class="container-page py-section">
+	<div class="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+		<div class="reveal relative">
+			<div class="relative overflow-hidden rounded-organic">
+				<Picture
+					src={image}
+					alt={alt}
+					formats={['avif', 'webp']}
+					widths={[600, 900, 1200]}
+					sizes="(min-width: 1024px) 50vw, 100vw"
+					loading="lazy"
+					decoding="async"
+					class="h-[24rem] w-full object-cover sm:h-[30rem] lg:h-[34rem]"
+				/>
+				<div class="absolute inset-0 bg-gradient-to-t from-[#07120d]/70 via-transparent to-transparent"></div>
+				<blockquote class="absolute inset-x-0 bottom-0 p-6 text-[#f7f5ee] md:p-8">
+					<p class="font-display text-xl leading-snug md:text-2xl">
+						“El mejor recuerdo que un viajero puede dejar es un lugar igual de sano.”
+					</p>
+					<footer class="mt-3 text-[0.7rem] uppercase tracking-[0.14em] text-[#8fc7a8]">
+						Equipo Antioquia Silvestre
+					</footer>
+				</blockquote>
+			</div>
+			<div class="absolute -bottom-5 -right-3 hidden rounded-2xl border border-line bg-panel px-5 py-4 shadow-lift sm:block">
+				<p class="font-display text-3xl font-medium text-brand">100%</p>
+				<p class="text-[0.68rem] uppercase tracking-[0.12em] text-muted">guías locales</p>
+			</div>
+		</div>
+
+		<div class="reveal">
+			<p class="eyebrow text-accent">Compromiso</p>
+			<h2 class="mt-4 text-h2 font-medium text-ink">Viajar sin dejar el lugar peor de como lo encontramos.</h2>
+			<p class="mt-5 text-body text-muted">
+				El ecoturismo no es solo visitar bosques: es asegurarse de que sigan ahí. Estas son las reglas
+				que aplicamos en cada ruta y las que pedimos a quienes viajan con nosotros.
+			</p>
+
+			<ul class="mt-8 space-y-5">
+				{
+					commitments.map((item) => (
+						<li class="flex gap-4">
+							<span class="grid size-10 shrink-0 place-items-center rounded-full border border-brand/20 bg-brand/5 text-brand">
+								<Icon name={item.icon} size={19} />
+							</span>
+							<div>
+								<h3 class="font-display text-lg font-semibold text-ink">{item.title}</h3>
+								<p class="mt-1 text-small text-muted">{item.text}</p>
+							</div>
+						</li>
+					))
+				}
+			</ul>
+		</div>
+	</div>
+</section>

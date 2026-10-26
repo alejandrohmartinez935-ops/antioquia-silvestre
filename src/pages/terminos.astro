@@ -1,0 +1,154 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Breadcrumbs from '../components/ui/Breadcrumbs.astro';
+import Prose from '../components/ui/Prose.astro';
+import Button from '../components/ui/Button.astro';
+import Icon from '../components/ui/Icon.astro';
+import { site } from '../data/site';
+
+const updated = 'octubre de 2026';
+
+const schema = {
+	'@context': 'https://schema.org',
+	'@type': 'WebPage',
+	name: 'Términos de uso · Antioquia Silvestre',
+	url: `${site.url}/terminos`,
+	description: 'Condiciones de uso del sitio Antioquia Silvestre y alcance de la información publicada.',
+};
+---
+
+<Layout
+	title="Términos de uso"
+	description="Términos y condiciones de uso de Antioquia Silvestre: naturaleza del sitio, exactitud de la información de rutas, propiedad intelectual y responsabilidad."
+	schema={schema}
+>
+	<section class="border-b border-line/70 bg-surface/50">
+		<div class="container-page py-14 md:py-20">
+			<Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'Términos' }]} />
+
+			<div class="mt-8 max-w-3xl">
+				<p class="eyebrow text-accent">Legal</p>
+				<h1 class="mt-4 text-h1 font-medium text-ink">Términos de uso.</h1>
+				<p class="measure mt-5 text-lead text-muted">
+					Antioquia Silvestre es un proyecto editorial de demostración. Antes de usar la
+					información para planear una salida real, contrasta los datos con un guía local y con las
+					autoridades del lugar.
+				</p>
+				<p class="mt-4 text-[0.75rem] uppercase tracking-[0.1em] text-muted">
+					Última actualización: {updated}
+				</p>
+			</div>
+		</div>
+	</section>
+
+	<section class="container-page grid gap-12 py-12 md:py-16 lg:grid-cols-[1fr_18rem] lg:gap-16">
+		<Prose>
+			<h2>Naturaleza del sitio</h2>
+			<p>
+				Antioquia Silvestre es una demostración con fines educativos. Los destinos existen, pero los
+				precios, el registro RNT ({site.rnt}), los teléfonos, el correo y la operación turística son
+				ficticios. Nada de lo publicado aquí constituye una oferta comercial ni una reserva.
+			</p>
+
+			<h2>Información de rutas y destinos</h2>
+			<p>
+				Las dificultades, distancias, desniveles, tiempos y temporadas son valores de referencia
+				orientativos. No reemplazan un plan de viaje verificado ni la lectura de las condiciones
+				reales del terreno. El senderismo y las actividades en ríos y cascadas implican riesgos:
+				sal con guía, avisa a alguien de tu itinerario, lleva agua, abrigo y calzado adecuado.
+			</p>
+			<p>
+				No garantizamos la exactitud permanente de la información: el clima, el estado de los
+				senderos, los permisos de acceso y los servicios locales cambian sin previo aviso.
+			</p>
+
+			<h2>Uso permitido</h2>
+			<ul>
+				<li>Consultar y compartir el contenido para uso personal o educativo.</li>
+				<li>
+					Reutilizar las fotografías citando autor, licencia y enlace original, según los términos
+					de cada licencia Creative Commons.
+				</li>
+				<li>Enlazar a cualquier página del sitio sin necesidad de autorización.</li>
+			</ul>
+			<p>No está permitido:</p>
+			<ul>
+				<li>Presentar el contenido como propio ni eliminar los créditos de las imágenes.</li>
+				<li>Usar la marca o el diseño para simular una agencia de viajes real.</li>
+				<li>Automatizar envíos al formulario de contacto o intentar vulnerar su funcionamiento.</li>
+			</ul>
+
+			<h2>Propiedad intelectual</h2>
+			<p>
+				Los textos, la identidad visual, el mapa ilustrado y los iconos son creación del proyecto.
+				Las fotografías pertenecen a sus autores y se usan bajo licencias Creative Commons; los
+				créditos completos están en la página de <a href="/creditos">créditos</a>. Las tipografías se
+				distribuyen bajo SIL Open Font License.
+			</p>
+
+			<h2>Enlaces externos</h2>
+			<p>
+				El sitio enlaza a WhatsApp, Wikimedia Commons y otras fuentes. No controlamos esos servicios
+				ni respondemos por sus contenidos, disponibilidad o políticas.
+			</p>
+
+			<h2>Limitación de responsabilidad</h2>
+			<p>
+				En la medida permitida por la ley, el proyecto no asume responsabilidad por decisiones de
+				viaje tomadas a partir de la información publicada, ni por daños derivados del uso de rutas,
+				senderos o servicios de terceros. La verificación previa con guías locales y autoridades es
+				responsabilidad de quien viaja.
+			</p>
+
+			<h2>Formulario de contacto</h2>
+			<p>
+				El envío de una consulta no crea una relación contractual. El tratamiento de los datos se
+				describe en la <a href="/privacidad">política de privacidad</a>.
+			</p>
+
+			<h2>Modificaciones</h2>
+			<p>
+				Podemos actualizar estos términos en cualquier momento. La versión vigente es la publicada
+				en esta página, con la fecha indicada arriba.
+			</p>
+
+			<h2>Ley aplicable</h2>
+			<p>
+				Estos términos se rigen por la legislación colombiana. Cualquier controversia se someterá a
+				los jueces competentes de Medellín, Antioquia.
+			</p>
+		</Prose>
+
+		<div class="lg:sticky lg:top-24 lg:self-start">
+			<div class="rounded-panel border border-line/80 bg-panel p-6">
+				<p class="eyebrow text-accent">Lo esencial</p>
+				<ul class="mt-4 space-y-3 text-small text-muted">
+					<li class="flex gap-2.5">
+						<Icon name="check" size={16} class="mt-0.5 shrink-0 text-brand" />
+						Sitio de demostración: sin reservas ni pagos reales.
+					</li>
+					<li class="flex gap-2.5">
+						<Icon name="check" size={16} class="mt-0.5 shrink-0 text-brand" />
+						Rutas de referencia: confirma siempre con un guía.
+					</li>
+					<li class="flex gap-2.5">
+						<Icon name="check" size={16} class="mt-0.5 shrink-0 text-brand" />
+						Fotos Creative Commons con crédito obligatorio.
+					</li>
+				</ul>
+				<Button href="/creditos" variant="secondary" class="mt-6 w-full" icon="arrow-right">
+					Ver créditos
+				</Button>
+			</div>
+
+			<div class="mt-4 rounded-card border border-ochre/30 bg-bird-soft/40 p-4">
+				<p class="flex items-start gap-2 text-[0.75rem] leading-relaxed text-ink/80">
+					<Icon name="alert" size={15} class="mt-0.5 shrink-0 text-ochre" />
+					<span>
+						La información de dificultad y tiempos no sustituye un plan de viaje verificado.
+					</span>
+				</p>
+			</div>
+		</div>
+	</section>
+</Layout>

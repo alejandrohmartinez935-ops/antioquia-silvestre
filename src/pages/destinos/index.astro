@@ -1,0 +1,115 @@
+﻿---
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
+import Button from '../../components/ui/Button.astro';
+import DestinationCard from '../../components/destinos/DestinationCard.astro';
+import DestinationFilters from '../../components/destinos/DestinationFilters.astro';
+import Icon from '../../components/ui/Icon.astro';
+import { site } from '../../data/site';
+import { getCategoriaCounts, getDestinos } from '../../lib/content';
+
+const destinos = await getDestinos();
+const counts = await getCategoriaCounts();
+const total = destinos.length;
+
+const schema = {
+	'@context': 'https://schema.org',
+	'@type': 'ItemList',
+	name: 'Destinos de ecoturismo en Antioquia',
+	itemListElement: destinos.map((destino, index) => ({
+		'@type': 'ListItem',
+		position: index + 1,
+		url: `${site.url}/destinos/${destino.id}`,
+		name: destino.data.title,
+	})),
+};
+---
+
+<Layout
+	title="Destinos"
+	description="Siete destinos de ecoturismo en Antioquia: Guatapé, Jardín, Jericó, San Rafael, Támesis, Santa Rosa de Osos y Cocorná. Filtra por senderismo, cascadas, aves o cultura."
+	schema={schema}
+>
+	<section class="border-b border-line/70 bg-surface/50">
+		<div class="container-page py-14 md:py-20">
+			<Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'Destinos' }]} />
+
+			<div class="mt-8 grid gap-8 lg:grid-cols-[1.4fr_0.6fr] lg:items-end">
+				<div>
+					<p class="eyebrow text-accent">Mapa de destinos</p>
+					<h1 class="mt-4 max-w-3xl text-h1 font-medium text-ink">
+						Siete destinos, siete formas de caminar Antioquia.
+					</h1>
+					<p class="measure mt-5 text-lead text-muted">
+						Del embalse al páramo, del pueblo patrimonial a la cascada escondida. Cada ficha trae
+						dificultad, meses recomendados, cómo llegar y qué tener en cuenta antes de salir.
+					</p>
+				</div>
+
+				<dl class="grid grid-cols-2 gap-4 border-t border-line pt-5 lg:border-t-0 lg:border-l lg:pl-8 lg:pt-0">
+					<div>
+						<dt class="text-[0.68rem] uppercase tracking-[0.12em] text-muted">Destinos</dt>
+						<dd class="font-display text-3xl text-brand">{total}</dd>
+					</div>
+					<div>
+						<dt class="text-[0.68rem] uppercase tracking-[0.12em] text-muted">Categorías</dt>
+						<dd class="font-display text-3xl text-brand">4</dd>
+					</div>
+				</dl>
+
+				<p class="mt-4 flex items-start gap-2 text-[0.72rem] leading-snug text-muted lg:col-span-2 lg:mt-5">
+					<Icon name="alert" size={14} class="mt-0.5 shrink-0 text-ochre" />
+					<span>
+						La información de dificultad y tiempos es de referencia. Confirma siempre con un guía
+						local.
+					</span>
+				</p>
+			</div>
+		</div>
+	</section>
+
+	<section class="container-page py-10 md:py-14" aria-labelledby="listado-destinos">
+		<h2 id="listado-destinos" class="sr-only">Listado de destinos</h2>
+		<DestinationFilters counts={counts} total={total} />
+
+		<div class="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3" data-destinos-grid>
+			{
+				destinos.map((destino) => (
+					<DestinationCard
+						destino={destino}
+						class="reveal"
+						sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+					/>
+				))
+			}
+		</div>
+
+		<div
+			data-empty-state
+			hidden
+			class="mt-8 rounded-panel border border-dashed border-line bg-panel px-6 py-16 text-center"
+		>
+			<p class="font-display text-2xl text-ink">No hay destinos en esta categoría.</p>
+			<p class="mx-auto mt-2 max-w-md text-small text-muted">
+				Prueba con otra categoría o revisa todos los destinos disponibles.
+			</p>
+			<Button href="/destinos" class="mt-6" variant="secondary">Ver todos</Button>
+		</div>
+
+		<div class="mt-14 flex flex-col gap-4 rounded-card border border-line/80 bg-panel p-6 sm:flex-row sm:items-center sm:justify-between">
+			<div class="flex items-start gap-3">
+				<Icon name="compass" size={22} class="mt-0.5 shrink-0 text-brand" />
+				<div>
+					<p class="font-display text-lg font-semibold text-ink">¿No sabes cuál elegir?</p>
+					<p class="text-small text-muted">
+						Cuéntanos cuántos días tienes y qué te gusta hacer; te proponemos una ruta.
+					</p>
+				</div>
+			</div>
+			<Button href="/contacto" variant="secondary" class="shrink-0" icon="arrow-right">
+				Pedir recomendación
+			</Button>
+		</div>
+	</section>
+</Layout>
+

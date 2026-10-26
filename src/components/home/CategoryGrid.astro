@@ -1,0 +1,64 @@
+---
+import { categories } from '../../data/site';
+import Icon from '../ui/Icon.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+
+interface Props {
+	counts: Record<string, number>;
+}
+
+const { counts } = Astro.props;
+
+const tone: Record<string, string> = {
+	hike: 'bg-hike-soft text-hike',
+	water: 'bg-water-soft text-water',
+	bird: 'bg-bird-soft text-bird',
+	culture: 'bg-culture-soft text-culture',
+};
+---
+
+<section class="border-y border-line/70 bg-surface/60">
+	<div class="container-page py-section">
+		<SectionHeading
+			eyebrow="Cómo viajar"
+			title="Cuatro formas de leer el paisaje"
+			intro="Filtra los destinos por lo que quieres sentir: el esfuerzo de una caminata, el ruido del agua, el silencio de un comedero de aves o la memoria de un pueblo."
+		/>
+
+		<div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+			{
+				categories.map((category) => (
+					<a
+						href={`/destinos?categoria=${category.slug}`}
+						class="group relative flex flex-col justify-between gap-8 overflow-hidden rounded-card border border-line/80 bg-panel p-6 transition-[transform,border-color,box-shadow] duration-300 ease-out-soft hover:-translate-y-1 hover:border-brand/40 hover:shadow-lift"
+					>
+						<div class="flex items-start justify-between gap-4">
+							<span class={`grid size-12 place-items-center rounded-full ${tone[category.color]}`}>
+								<Icon name={category.icon} size={23} />
+							</span>
+							<span class="text-[0.7rem] font-bold uppercase tracking-[0.12em] text-muted">
+								{counts[category.slug] ?? 0}{' '}
+								{counts[category.slug] === 1 ? 'destino' : 'destinos'}
+							</span>
+						</div>
+
+						<div>
+							<h3 class="font-display text-2xl font-medium tracking-tight text-ink">
+								{category.label}
+							</h3>
+							<p class="mt-2 text-small text-muted">{category.description}</p>
+							<span class="mt-5 inline-flex items-center gap-2 text-[0.78rem] font-bold uppercase tracking-[0.1em] text-brand">
+								Explorar
+								<Icon
+									name="arrow-right"
+									size={15}
+									class="transition-transform duration-300 group-hover:translate-x-1"
+								/>
+							</span>
+						</div>
+					</a>
+				))
+			}
+		</div>
+	</div>
+</section>

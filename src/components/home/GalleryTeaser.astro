@@ -1,0 +1,76 @@
+---
+import { Picture } from 'astro:assets';
+import type { Foto } from '../../lib/content';
+import Button from '../ui/Button.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+
+interface Props {
+	photos: Foto[];
+}
+
+const { photos } = Astro.props;
+const [lead, ...rest] = photos;
+---
+
+<section class="container-page py-section">
+	<div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+		<SectionHeading
+			eyebrow="Galería"
+			title="El territorio, sin filtros"
+			intro="Fotografías de paisaje, agua, fauna y cultura tomadas en Antioquia. Cada imagen lleva su crédito y su licencia."
+		/>
+		<Button href="/galeria" variant="secondary" icon="arrow-right" class="shrink-0">
+			Abrir galería
+		</Button>
+	</div>
+
+	<div class="mt-10 grid grid-cols-2 gap-3 md:h-[34rem] md:grid-cols-4 md:grid-rows-2">
+		{
+			lead && (
+				<figure class="group relative col-span-2 row-span-2 overflow-hidden rounded-card bg-surface">
+					<Picture
+						src={lead.data.src}
+						alt={lead.data.alt}
+						formats={['avif', 'webp']}
+						widths={[600, 900, 1200]}
+						sizes="(min-width: 768px) 50vw, 100vw"
+						loading="lazy"
+						decoding="async"
+						class="aspect-[4/3] h-full w-full object-cover transition-transform duration-700 ease-out-soft group-hover:scale-[1.03] md:aspect-auto"
+					/>
+					<figcaption class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#07120d]/85 to-transparent p-4 pt-12 text-[#f7f5ee] md:p-6">
+						<p class="text-[0.68rem] font-bold uppercase tracking-[0.14em] text-[#8fc7a8]">
+							{lead.data.location}
+						</p>
+						<p class="mt-1 font-display text-lg leading-snug md:text-xl">{lead.data.caption}</p>
+					</figcaption>
+				</figure>
+			)
+		}
+		{
+			rest.map((photo, index) => (
+				<figure
+					class:list={[
+						'group relative overflow-hidden rounded-card bg-surface',
+						index > 2 && 'hidden md:block',
+					]}
+				>
+					<Picture
+						src={photo.data.src}
+						alt={photo.data.alt}
+						formats={['avif', 'webp']}
+						widths={[320, 480, 720]}
+						sizes="(min-width: 768px) 25vw, 50vw"
+						loading="lazy"
+						decoding="async"
+						class="aspect-square h-full w-full object-cover transition-transform duration-700 ease-out-soft group-hover:scale-[1.05] md:aspect-auto"
+					/>
+				</figure>
+			))
+		}
+	</div>
+
+	<p class="mt-4 text-right text-[0.72rem] text-muted">
+		Fotografías de Wikimedia Commons · Licencias Creative Commons
+	</p>
+</section>

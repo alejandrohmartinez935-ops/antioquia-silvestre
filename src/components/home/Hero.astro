@@ -1,0 +1,104 @@
+﻿---
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { site } from '../../data/site';
+import { whatsappLink } from '../../lib/utils';
+import Button from '../ui/Button.astro';
+import Icon from '../ui/Icon.astro';
+
+interface Props {
+	image: ImageMetadata;
+	alt: string;
+}
+
+const { image, alt } = Astro.props;
+const reserveLink = whatsappLink(
+	'Hola, quiero planear un viaje de ecoturismo por Antioquia. ¿Me ayudan con un itinerario?',
+	site.whatsapp,
+);
+---
+
+<section class="relative isolate overflow-hidden bg-[#07120d] text-[#f7f5ee]">
+	<div class="absolute inset-0 -z-10">
+		<Picture
+			src={image}
+			alt={alt}
+			formats={['avif', 'webp']}
+			widths={[768, 1280, 1920, 2560]}
+			sizes="100vw"
+			loading="eager"
+			fetchpriority="high"
+			decoding="async"
+			class="h-full w-full object-cover object-center"
+		/>
+		<div class="absolute inset-0 bg-[linear-gradient(to_top,#07120d_0%,rgba(7,18,13,0.82)_38%,rgba(7,18,13,0.35)_100%)]"></div>
+		<div class="grain absolute inset-0"></div>
+	</div>
+
+	<div class="container-page relative flex min-h-[calc(100svh-4rem)] flex-col justify-end pb-12 pt-28 md:min-h-[46rem] md:pb-16 lg:min-h-[52rem]">
+		<div class="max-w-4xl">
+			<p class="flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.7rem] font-bold uppercase tracking-[0.18em] text-[#8fc7a8]">
+				<span class="inline-flex items-center gap-1.5">
+					<Icon name="pin" size={13} />
+					Antioquia, Colombia
+				</span>
+				<span class="h-px w-8 bg-[#8fc7a8]/50"></span>
+				<span>Ecoturismo con guías locales</span>
+			</p>
+
+			<h1 class="mt-6 max-w-4xl text-display font-medium text-[#f7f5ee]">
+				Antioquia,<br />
+				<span class="text-[#8fc7a8]">contada por su territorio.</span>
+			</h1>
+
+			<p class="mt-6 max-w-xl text-lead text-[#f7f5ee]/80">
+				Siete destinos, cuatro formas de viajar y una sola idea: caminar despacio, mirar de cerca y
+				dejar que el paisaje marque el ritmo.
+			</p>
+
+			<div class="mt-9 flex flex-wrap items-center gap-3">
+				<Button href="/destinos" size="lg" variant="inverse" icon="arrow-right">
+					Explorar destinos
+				</Button>
+				<Button
+					href={reserveLink}
+					target="_blank"
+					rel="noopener noreferrer"
+					size="lg"
+					variant="outline-light"
+					icon="whatsapp"
+					iconPosition="left"
+				>
+					Hablar con un guía
+				</Button>
+			</div>
+		</div>
+
+		<dl class="mt-14 grid max-w-2xl grid-cols-3 gap-4 border-t border-[#f7f5ee]/15 pt-6 md:mt-20">
+			{
+				site.stats.map((stat) => (
+					<div>
+						<dt class="sr-only">{stat.label}</dt>
+						<dd>
+							<span class="block font-display text-3xl font-medium text-[#f7f5ee] md:text-4xl">
+								{stat.value}
+							</span>
+							<span class="mt-1 block text-[0.72rem] uppercase tracking-[0.12em] text-[#f7f5ee]/55">
+								{stat.label}
+							</span>
+						</dd>
+					</div>
+				))
+			}
+		</dl>
+	</div>
+
+	<a
+		href="#destacados"
+		class="absolute bottom-6 right-6 hidden size-12 place-items-center rounded-full border border-[#f7f5ee]/25 text-[#f7f5ee]/70 transition-colors hover:border-[#8fc7a8] hover:text-[#8fc7a8] lg:grid"
+		aria-label="Bajar a destinos destacados"
+	>
+		<Icon name="chevron-down" size={20} />
+	</a>
+</section>
+

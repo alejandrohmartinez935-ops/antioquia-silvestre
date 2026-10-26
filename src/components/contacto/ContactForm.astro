@@ -1,0 +1,276 @@
+---
+import { site } from '../../data/site';
+import { whatsappLink } from '../../lib/utils';
+import type { Destino } from '../../lib/content';
+import Icon from '../ui/Icon.astro';
+
+interface Props {
+	destinos: Destino[];
+}
+
+const { destinos } = Astro.props;
+
+const fallbackLink = whatsappLink(
+	'Hola, quiero hacer una consulta sobre un viaje de ecoturismo por Antioquia.',
+	site.whatsapp,
+);
+
+const fieldClass =
+	'w-full rounded-field border border-line bg-canvas px-4 py-3 text-body text-ink placeholder:text-muted/60 transition-colors focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20';
+const labelClass = 'mb-1.5 block text-[0.7rem] font-bold uppercase tracking-[0.1em] text-muted';
+---
+
+<div class="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-14">
+	<div class="space-y-8">
+		<div>
+			<p class="eyebrow text-accent">Escríbenos</p>
+			<h2 class="mt-3 text-h2 font-medium text-ink">Cuéntanos qué tienes en mente.</h2>
+			<p class="mt-4 text-body text-muted">
+				Completa el formulario y te respondemos con una propuesta de ruta. Si prefieres algo más
+				directo, escríbenos por WhatsApp: contestamos en horario de atención.
+			</p>
+		</div>
+
+		<ul class="space-y-3">
+			<li>
+				<a
+					href={fallbackLink}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="group flex items-center gap-4 rounded-card border border-line/80 bg-panel p-4 transition-colors hover:border-brand/40"
+				>
+					<span class="grid size-11 shrink-0 place-items-center rounded-full bg-hike-soft text-hike">
+						<Icon name="whatsapp" size={20} />
+					</span>
+					<span>
+						<span class="block text-[0.68rem] font-bold uppercase tracking-[0.1em] text-muted">WhatsApp</span>
+						<span class="block text-small font-semibold text-ink group-hover:text-brand">{site.phoneDisplay}</span>
+					</span>
+					<Icon name="arrow-up-right" size={17} class="ml-auto text-muted" />
+				</a>
+			</li>
+			<li>
+				<a
+					href={`mailto:${site.email}`}
+					class="group flex items-center gap-4 rounded-card border border-line/80 bg-panel p-4 transition-colors hover:border-brand/40"
+				>
+					<span class="grid size-11 shrink-0 place-items-center rounded-full bg-water-soft text-water">
+						<Icon name="mail" size={20} />
+					</span>
+					<span class="min-w-0">
+						<span class="block text-[0.68rem] font-bold uppercase tracking-[0.1em] text-muted">Correo</span>
+						<span class="block truncate text-small font-semibold text-ink group-hover:text-brand">{site.email}</span>
+					</span>
+					<Icon name="arrow-up-right" size={17} class="ml-auto text-muted" />
+				</a>
+			</li>
+			<li class="flex items-center gap-3 rounded-card border border-line/80 bg-panel p-4">
+				<span class="grid size-11 shrink-0 place-items-center rounded-full bg-surface text-brand">
+					<Icon name="clock" size={20} />
+				</span>
+				<span>
+					<span class="block text-[0.68rem] font-bold uppercase tracking-[0.1em] text-muted">Horario</span>
+					<span class="block text-small font-semibold text-ink">{site.schedule}</span>
+				</span>
+			</li>
+		</ul>
+
+		<div class="rounded-card border border-ochre/30 bg-bird-soft/40 p-4">
+			<p class="flex items-start gap-2 text-[0.75rem] leading-relaxed text-ink/80">
+				<Icon name="alert" size={15} class="mt-0.5 shrink-0 text-ochre" />
+				<span>
+					Sitio de demostración con fines educativos. No se envían correos reales sin configurar
+					Resend y los datos de contacto son ficticios.
+				</span>
+			</p>
+		</div>
+	</div>
+
+	<div class="relative">
+		<form
+			data-contact-form
+			action="/api/contacto"
+			method="post"
+			novalidate
+			class="rounded-panel border border-line/80 bg-panel p-6 shadow-soft sm:p-8"
+		>
+			<h2 class="font-display text-2xl font-medium text-ink">Formulario de contacto</h2>
+			<p class="mt-1 text-small text-muted">Los campos con * son obligatorios.</p>
+
+			<div class="mt-6 grid gap-4 sm:grid-cols-2">
+				<div class="sm:col-span-1">
+					<label class={labelClass} for="nombre">Nombre *</label>
+					<input
+						class={fieldClass}
+						id="nombre"
+						name="nombre"
+						type="text"
+						autocomplete="name"
+						required
+						minlength="2"
+						maxlength="80"
+						placeholder="Tu nombre"
+						aria-describedby="error-nombre"
+					/>
+					<p id="error-nombre" data-error-for="nombre" class="mt-1 hidden text-[0.75rem] text-error"></p>
+				</div>
+
+				<div class="sm:col-span-1">
+					<label class={labelClass} for="email">Correo *</label>
+					<input
+						class={fieldClass}
+						id="email"
+						name="email"
+						type="email"
+						autocomplete="email"
+						required
+						placeholder="tu@correo.com"
+						aria-describedby="error-email"
+					/>
+					<p id="error-email" data-error-for="email" class="mt-1 hidden text-[0.75rem] text-error"></p>
+				</div>
+
+				<div class="sm:col-span-1">
+					<label class={labelClass} for="telefono">Teléfono</label>
+					<input
+						class={fieldClass}
+						id="telefono"
+						name="telefono"
+						type="tel"
+						autocomplete="tel"
+						placeholder="+57 300 000 0000"
+						aria-describedby="error-telefono"
+					/>
+					<p id="error-telefono" data-error-for="telefono" class="mt-1 hidden text-[0.75rem] text-error"></p>
+				</div>
+
+				<div class="sm:col-span-1">
+					<label class={labelClass} for="personas">Personas *</label>
+					<input
+						class={fieldClass}
+						id="personas"
+						name="personas"
+						type="number"
+						min="1"
+						max="20"
+						step="1"
+						value="2"
+						required
+						aria-describedby="error-personas"
+					/>
+					<p id="error-personas" data-error-for="personas" class="mt-1 hidden text-[0.75rem] text-error"></p>
+				</div>
+
+				<div class="sm:col-span-1">
+					<label class={labelClass} for="destino">Destino de interés</label>
+					<select class={fieldClass} id="destino" name="destino">
+						<option value="">Aún no lo sé</option>
+						{destinos.map((destino) => (
+							<option value={destino.data.title}>{destino.data.title}</option>
+						))}
+						<option value="Ruta a medida">Quiero una ruta a medida</option>
+					</select>
+				</div>
+
+				<div class="sm:col-span-1">
+					<label class={labelClass} for="fechas">Fechas o temporada</label>
+					<input
+						class={fieldClass}
+						id="fechas"
+						name="fechas"
+						type="text"
+						placeholder="Ej. enero, o 12–15 de marzo"
+						maxlength="120"
+					/>
+				</div>
+
+				<div class="sm:col-span-2">
+					<label class={labelClass} for="mensaje">Mensaje *</label>
+					<textarea
+						class={`${fieldClass} min-h-32 resize-y`}
+						id="mensaje"
+						name="mensaje"
+						rows="5"
+						required
+						minlength="15"
+						maxlength="1500"
+						placeholder="Cuéntanos qué te gustaría ver, con quién viajas y qué te gustaría evitar."
+						aria-describedby="error-mensaje"
+					></textarea>
+					<p id="error-mensaje" data-error-for="mensaje" class="mt-1 hidden text-[0.75rem] text-error"></p>
+				</div>
+
+				<div class="sm:col-span-2">
+					<label class="flex items-start gap-3 text-small text-muted">
+						<input
+							type="checkbox"
+							name="consent"
+							required
+							class="mt-1 size-4 shrink-0 rounded border-line text-brand accent-[var(--color-brand)] focus-visible:outline-2"
+							aria-describedby="error-consent"
+						/>
+						<span>
+							Acepto el <a href="/privacidad" class="font-semibold text-brand underline">tratamiento de mis datos</a>{' '}
+							para recibir respuesta a esta consulta. *
+						</span>
+					</label>
+					<p id="error-consent" data-error-for="consent" class="mt-1 hidden text-[0.75rem] text-error"></p>
+				</div>
+			</div>
+
+			<div class="absolute -left-[9999px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
+				<label for="website">No rellenar</label>
+				<input id="website" name="website" type="text" tabindex="-1" autocomplete="off" />
+			</div>
+			<input type="hidden" name="ts" data-form-ts value="" />
+
+			<div class="mt-6 flex flex-col gap-3">
+				<button
+					type="submit"
+					data-form-submit
+					class="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-brand px-6 text-small font-semibold text-on-brand transition-colors hover:bg-brand-hover disabled:cursor-wait disabled:opacity-70"
+				>
+					<Icon name="mail" size={18} />
+					<span data-submit-label>Enviar consulta</span>
+				</button>
+				<p class="text-center text-[0.72rem] leading-relaxed text-muted">
+					Respondemos en 1 día hábil. Si el correo falla, te daremos el enlace directo a WhatsApp.
+				</p>
+			</div>
+
+			<div data-form-status role="status" aria-live="polite" class="mt-4 hidden rounded-field border px-4 py-3 text-small"></div>
+		</form>
+
+		<div
+			data-form-success
+			hidden
+			class="rounded-panel border border-brand/25 bg-brand/5 p-8 text-center"
+		>
+			<span class="mx-auto grid size-14 place-items-center rounded-full bg-brand text-on-brand">
+				<Icon name="check" size={26} />
+			</span>
+			<h2 class="mt-5 font-display text-2xl font-medium text-ink" tabindex="-1" data-success-title>
+				Mensaje enviado
+			</h2>
+			<p class="mx-auto mt-2 max-w-sm text-small text-muted">
+				Gracias por escribirnos. Revisaremos tu consulta y te responderemos al correo que indicaste.
+			</p>
+			<a
+				href={fallbackLink}
+				target="_blank"
+				rel="noopener noreferrer"
+				class="mt-6 inline-flex items-center gap-2 text-small font-semibold text-brand underline"
+			>
+				¿Prefieres WhatsApp?
+				<Icon name="arrow-up-right" size={15} />
+			</a>
+			<p class="mt-6 text-[0.72rem] text-muted">
+				Recuerda: este es un sitio de demostración con fines educativos.
+			</p>
+		</div>
+	</div>
+</div>
+
+<script>
+	import '../../scripts/contact-form';
+</script>

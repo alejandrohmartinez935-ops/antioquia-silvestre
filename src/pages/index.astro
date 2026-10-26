@@ -1,11 +1,97 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import Hero from '../components/home/Hero.astro';
+import ValueStrip from '../components/home/ValueStrip.astro';
+import FeaturedDestinations from '../components/home/FeaturedDestinations.astro';
+import CategoryGrid from '../components/home/CategoryGrid.astro';
+import GalleryTeaser from '../components/home/GalleryTeaser.astro';
+import RouteTeaser from '../components/home/RouteTeaser.astro';
+import Commitment from '../components/home/Commitment.astro';
+import FinalCTA from '../components/home/FinalCTA.astro';
+import { site } from '../data/site';
+import { getCategoriaCounts, getDestinos, getGaleria, getRutas } from '../lib/content';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const [destinos, rutas, galeria, counts] = await Promise.all([
+	getDestinos(),
+	getRutas(),
+	getGaleria(),
+	getCategoriaCounts(),
+]);
+
+const destacados = [...destinos].sort((a, b) => Number(b.data.featured) - Number(a.data.featured));
+const featured = destacados.slice(0, 5);
+const hero = destinos.find((destino) => destino.id === 'jardin' && destino.data.heroImage);
+
+const galeriaDestacada = galeria.filter((foto) => foto.data.featured);
+const galeriaTeaser = [
+	...(galeriaDestacada.find((foto) => foto.data.destination === 'jardin' && foto.data.category === 'agua')
+		? [
+				galeriaDestacada.find(
+					(foto) => foto.data.destination === 'jardin' && foto.data.category === 'agua',
+				)!,
+			]
+		: []),
+	...galeriaDestacada.filter(
+		(foto) => !(foto.data.destination === 'jardin' && foto.data.category === 'agua'),
+	),
+].slice(0, 5);
+
+const commitmentFoto =
+	galeria.find((foto) => foto.id.endsWith('cafe-jardin')) ?? galeriaDestacada[0] ?? galeria[0];
+
+const heroImage = hero?.data.heroImage ?? destinos[0]?.data.heroImage;
+
+const schema = [
+	{
+		'@context': 'https://schema.org',
+		'@type': 'TravelAgency',
+		'@id': `${site.url}/#organization`,
+		name: site.name,
+		description: site.description,
+		url: site.url,
+		email: site.email,
+		telephone: `+${site.whatsapp}`,
+		areaServed: { '@type': 'AdministrativeArea', name: 'Antioquia, Colombia' },
+		address: {
+			'@type': 'PostalAddress',
+			addressLocality: 'Medellín',
+			addressRegion: 'Antioquia',
+			addressCountry: 'CO',
+		},
+	},
+	{
+		'@context': 'https://schema.org',
+		'@type': 'WebSite',
+		'@id': `${site.url}/#website`,
+		name: site.name,
+		url: site.url,
+		inLanguage: 'es-CO',
+		publisher: { '@id': `${site.url}/#organization` },
+	},
+];
 ---
 
-<Layout>
-	<Welcome />
+<Layout schema={schema}>
+	<Hero
+		image={heroImage}
+		alt={hero?.data.heroAlt ?? 'Paisaje de Antioquia entre montañas y bosque'}
+	/>
+
+	<ValueStrip />
+
+	<FeaturedDestinations destinos={featured} />
+
+	<CategoryGrid counts={counts} />
+
+	<GalleryTeaser photos={galeriaTeaser} />
+
+	<RouteTeaser rutas={rutas} destinos={destinos} />
+
+	{
+		commitmentFoto && (
+			<Commitment image={commitmentFoto.data.src} alt={commitmentFoto.data.alt} />
+		)
+	}
+
+	<FinalCTA />
 </Layout>

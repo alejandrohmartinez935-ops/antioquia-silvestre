@@ -1,0 +1,47 @@
+---
+import { categories } from '../../data/site';
+
+interface Props {
+	counts: Record<string, number>;
+	total: number;
+}
+
+const { counts, total } = Astro.props;
+---
+
+<div class="flex flex-col gap-4">
+	<div class="flex flex-wrap items-center gap-2" role="group" aria-label="Filtrar destinos por categoría">
+		<button type="button" class="filter-pill" data-destino-filter="todos" aria-pressed="true">
+			Todos
+			<span class="filter-count">{total}</span>
+		</button>
+		{
+			categories.map((category) => (
+				<button
+					type="button"
+					class="filter-pill"
+					data-destino-filter={category.slug}
+					aria-pressed="false"
+				>
+					{category.label}
+					<span class="filter-count">{counts[category.slug] ?? 0}</span>
+				</button>
+			))
+		}
+	</div>
+
+	<p class="text-small text-muted" aria-live="polite">
+		<span data-results-count>{total}</span>{' '}
+		<span data-results-label>destinos disponibles</span>
+	</p>
+
+	<noscript>
+		<p class="rounded-field border border-line bg-panel px-4 py-3 text-small text-muted">
+			La filtración necesita JavaScript. Abajo están todos los destinos para que puedas recorrerlos.
+		</p>
+	</noscript>
+</div>
+
+<script>
+	import '../../scripts/filter-destinos';
+</script>

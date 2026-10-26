@@ -1,0 +1,69 @@
+---
+import type { IconName } from '../../lib/icons';
+import { cn } from '../../lib/utils';
+import Icon from './Icon.astro';
+
+interface Props {
+	href?: string;
+	variant?: 'primary' | 'secondary' | 'ghost' | 'light' | 'inverse' | 'outline-light';
+	size?: 'sm' | 'md' | 'lg';
+	class?: string;
+	icon?: IconName;
+	iconPosition?: 'left' | 'right';
+	type?: 'button' | 'submit';
+	target?: string;
+	rel?: string;
+	ariaLabel?: string;
+	disabled?: boolean;
+}
+
+const {
+	href,
+	variant = 'primary',
+	size = 'md',
+	class: className,
+	icon,
+	iconPosition = 'right',
+	type = 'button',
+	target,
+	rel,
+	ariaLabel,
+	disabled,
+} = Astro.props;
+
+const base =
+	'inline-flex items-center justify-center gap-2 rounded-full font-semibold tracking-tight transition-all duration-200 ease-out-soft focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-60';
+
+const variants = {
+	primary: 'bg-brand text-on-brand shadow-soft hover:bg-brand-hover hover:-translate-y-0.5',
+	secondary: 'border border-brand/30 text-brand hover:border-brand hover:bg-brand/5',
+	ghost: 'text-ink hover:bg-surface',
+	light: 'bg-canvas text-ink shadow-soft hover:bg-panel hover:-translate-y-0.5',
+	inverse: 'bg-[#f7f5ee] text-[#07120d] shadow-lift hover:bg-[#e9e5d8] hover:-translate-y-0.5',
+	'outline-light':
+		'border border-[#f7f5ee]/40 text-[#f7f5ee] hover:border-[#8fc7a8] hover:bg-[#8fc7a8]/10 hover:text-[#8fc7a8]',
+};
+
+const sizes = {
+	sm: 'h-9 px-4 text-small',
+	md: 'h-11 px-5 text-small',
+	lg: 'h-12 px-6 text-body',
+};
+
+const Tag = href ? 'a' : 'button';
+const iconSize = size === 'lg' ? 19 : 17;
+---
+
+<Tag
+	href={href}
+	type={href ? undefined : type}
+	target={target}
+	rel={rel}
+	aria-label={ariaLabel}
+	disabled={href ? undefined : disabled}
+	class={cn(base, variants[variant], sizes[size], className)}
+>
+	{icon && iconPosition === 'left' && <Icon name={icon} size={iconSize} />}
+	<slot />
+	{icon && iconPosition === 'right' && <Icon name={icon} size={iconSize} />}
+</Tag>

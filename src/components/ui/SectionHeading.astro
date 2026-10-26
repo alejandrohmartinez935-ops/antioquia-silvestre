@@ -1,0 +1,55 @@
+---
+import { cn } from '../../lib/utils';
+
+interface Props {
+	eyebrow?: string;
+	title: string;
+	intro?: string;
+	id?: string;
+	align?: 'left' | 'center';
+	class?: string;
+	tone?: 'default' | 'inverse';
+}
+
+const {
+	eyebrow,
+	title,
+	intro,
+	id,
+	align = 'left',
+	class: className,
+	tone = 'default',
+} = Astro.props;
+---
+
+<div
+	class={cn(
+		'flex flex-col gap-4',
+		align === 'center' ? 'items-center text-center' : 'items-start',
+		className,
+	)}
+>
+	{eyebrow && (
+		<p class={cn('eyebrow', tone === 'inverse' ? 'text-canvas/70' : 'text-accent')}>{eyebrow}</p>
+	)}
+	<h2
+		id={id}
+		class={cn(
+			'max-w-3xl text-h2 font-medium',
+			tone === 'inverse' ? 'text-canvas' : 'text-ink',
+		)}
+	>
+		{title}
+	</h2>
+	{intro && (
+		<p
+			class={cn(
+				'max-w-2xl text-body',
+				tone === 'inverse' ? 'text-canvas/75' : 'text-muted',
+			)}
+		>
+			{intro}
+		</p>
+	)}
+	<slot />
+</div>

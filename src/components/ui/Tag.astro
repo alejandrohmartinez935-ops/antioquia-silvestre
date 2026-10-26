@@ -1,0 +1,36 @@
+---
+import { categoryBySlug } from '../../data/site';
+import { cn } from '../../lib/utils';
+import Icon from './Icon.astro';
+
+interface Props {
+	category: string;
+	class?: string;
+	showIcon?: boolean;
+}
+
+const { category, class: className, showIcon = true } = Astro.props;
+const meta = categoryBySlug(category);
+
+const styles: Record<string, string> = {
+	hike: 'bg-hike-soft text-hike',
+	water: 'bg-water-soft text-water',
+	bird: 'bg-bird-soft text-bird',
+	culture: 'bg-culture-soft text-culture',
+};
+
+if (!meta) {
+	throw new Error(`Categoría desconocida: ${category}`);
+}
+---
+
+<span
+	class={cn(
+		'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[0.72rem] font-bold uppercase tracking-[0.08em]',
+		styles[meta.color],
+		className,
+	)}
+>
+	{showIcon && <Icon name={meta.icon} size={13} strokeWidth={2} />}
+	{meta.short}
+</span>

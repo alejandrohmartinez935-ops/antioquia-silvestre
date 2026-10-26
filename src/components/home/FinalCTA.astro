@@ -1,0 +1,68 @@
+﻿---
+import { site } from '../../data/site';
+import { whatsappLink } from '../../lib/utils';
+import Button from '../ui/Button.astro';
+import Icon from '../ui/Icon.astro';
+
+const reserveLink = whatsappLink(
+	'Hola, quiero información para armar un viaje de ecoturismo por Antioquia.',
+	site.whatsapp,
+);
+---
+
+<section class="container-page pb-section">
+	<div class="relative isolate overflow-hidden rounded-panel bg-[#a8451f] px-6 py-12 text-[#fff8f2] sm:px-10 md:py-16 lg:px-16 dark:bg-[#7a2f14]">
+		<svg
+			class="pointer-events-none absolute inset-0 -z-10 h-full w-full opacity-20"
+			viewBox="0 0 900 400"
+			aria-hidden="true"
+			preserveAspectRatio="xMidYMid slice"
+		>
+			<g fill="none" stroke="#fff8f2" stroke-width="1.1">
+				<path d="M-20 300c150-120 240-20 330-90s130-150 250-130 200 110 300 40" />
+				<path d="M-20 340c150-120 240-20 330-90s130-150 250-130 200 110 300 40" />
+				<path d="M-20 380c150-120 240-20 330-90s130-150 250-130 200 110 300 40" />
+				<path d="M-20 260c150-120 240-20 330-90s130-150 250-130 200 110 300 40" />
+			</g>
+		</svg>
+
+		<div class="grid gap-10 lg:grid-cols-[1.3fr_0.7fr] lg:items-end">
+			<div>
+				<p class="eyebrow text-[#ffe3d3]">¿Viajamos?</p>
+				<h2 class="mt-4 max-w-2xl text-h2 font-medium text-[#fff8f2]">
+					Cuéntanos qué quieres ver y armamos el resto.
+				</h2>
+				<p class="mt-4 max-w-xl text-body text-[#fff8f2]">
+					Escríbenos por WhatsApp o déjanos un mensaje. Respondemos con una propuesta de ruta, fechas
+					y una idea clara de lo que cuesta.
+				</p>
+			</div>
+
+			<div class="flex flex-col gap-3">
+				<Button
+					href={reserveLink}
+					target="_blank"
+					rel="noopener noreferrer"
+					variant="inverse"
+					size="lg"
+					icon="whatsapp"
+					iconPosition="left"
+					class="w-full"
+				>
+					Escribir por WhatsApp
+				</Button>
+				<a
+					href="/contacto"
+					class="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-[#fff8f2]/40 px-6 text-small font-semibold text-[#fff8f2] transition-colors hover:bg-[#fff8f2]/10"
+				>
+					<Icon name="mail" size={18} />
+					Usar el formulario
+				</a>
+				<p class="mt-1 text-center text-[0.72rem] text-[#ffe3d3]">
+					{site.schedule}
+				</p>
+			</div>
+		</div>
+	</div>
+</section>
+

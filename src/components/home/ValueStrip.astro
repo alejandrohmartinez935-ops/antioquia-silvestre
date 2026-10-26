@@ -1,0 +1,45 @@
+---
+import Icon from '../ui/Icon.astro';
+import type { IconName } from '../../lib/icons';
+
+const values: Array<{ icon: IconName; title: string; text: string }> = [
+	{
+		icon: 'compass',
+		title: 'Rutas verificadas',
+		text: 'Cada camino fue recorrido y descrito con datos de referencia.',
+	},
+	{
+		icon: 'users',
+		title: 'Guías de la vereda',
+		text: 'Trabajamos con personas que viven el territorio todo el año.',
+	},
+	{
+		icon: 'leaf',
+		title: 'Turismo regenerativo',
+		text: 'Grupos pequeños, residuos mínimos y compras locales.',
+	},
+	{
+		icon: 'shield',
+		title: 'Viaje informado',
+		text: 'Dificultad, clima y accesibilidad claros antes de salir.',
+	},
+];
+---
+
+<section class="border-b border-line/70 bg-panel">
+	<div class="container-page grid gap-8 py-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6 lg:py-12">
+		{
+			values.map((value) => (
+				<div class="flex gap-4">
+					<span class="grid size-11 shrink-0 place-items-center rounded-full bg-brand/10 text-brand">
+						<Icon name={value.icon} size={21} />
+					</span>
+					<div>
+						<h2 class="font-display text-lg font-semibold tracking-tight text-ink">{value.title}</h2>
+						<p class="mt-1 text-small text-muted">{value.text}</p>
+					</div>
+				</div>
+			))
+		}
+	</div>
+</section>

@@ -1,0 +1,211 @@
+---
+import { getImage } from 'astro:assets';
+import { Picture } from 'astro:assets';
+import Layout from '../layouts/Layout.astro';
+import Breadcrumbs from '../components/ui/Breadcrumbs.astro';
+import Button from '../components/ui/Button.astro';
+import Icon from '../components/ui/Icon.astro';
+import Lightbox from '../components/galeria/Lightbox.astro';
+import { site } from '../data/site';
+import { getGaleria } from '../lib/content';
+import type { IconName } from '../lib/icons';
+
+const photos = await getGaleria();
+
+const meta: Record<string, { label: string; style: string; icon: IconName }> = {
+	paisaje: { label: 'Paisaje', style: 'bg-hike-soft text-hike', icon: 'mountain' },
+	fauna: { label: 'Fauna', style: 'bg-bird-soft text-bird', icon: 'bird' },
+	cultura: { label: 'Cultura', style: 'bg-culture-soft text-culture', icon: 'landmark' },
+	agua: { label: 'Agua', style: 'bg-water-soft text-water', icon: 'droplet' },
+};
+
+const counts = photos.reduce<Record<string, number>>(
+	(acc, photo) => {
+		acc[photo.data.category] = (acc[photo.data.category] ?? 0) + 1;
+		return acc;
+	},
+	{ paisaje: 0, fauna: 0, cultura: 0, agua: 0 },
+);
+
+const fullImages = await Promise.all(
+	photos.map((photo) =>
+		getImage({ src: photo.data.src, width: 1600, format: 'webp', quality: 82 }),
+	),
+);
+
+const galleryData = photos.map((photo, index) => ({
+	src: fullImages[index].src,
+	alt: photo.data.alt,
+	caption: photo.data.caption,
+	location: photo.data.location,
+	credit: photo.data.credit,
+}));
+
+const schema = {
+	'@context': 'https://schema.org',
+	'@type': 'ImageGallery',
+	name: 'Galería de Antioquia Silvestre',
+	description:
+		'Fotografías de paisajes, cascadas, aves y cultura de Antioquia, Colombia.',
+	url: `${site.url}/galeria`,
+	about: 'Ecoturismo en Antioquia',
+};
+
+const filterLabels = [
+	{ slug: 'todas', label: 'Todas', total: photos.length },
+	...Object.entries(meta).map(([slug, value]) => ({
+		slug,
+		label: value.label,
+		total: counts[slug] ?? 0,
+	})),
+];
+---
+
+<Layout
+	title="Galería"
+	description="Galería de fotografías de Antioquia: paisajes de montaña, cascadas, aves y cultura. Imágenes con crédito y licencia Creative Commons."
+	schema={schema}
+>
+	<section class="border-b border-line/70 bg-surface/50">
+		<div class="container-page py-14 md:py-20">
+			<Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'Galería' }]} />
+
+			<div class="mt-8 grid gap-8 lg:grid-cols-[1.4fr_0.6fr] lg:items-end">
+				<div>
+					<p class="eyebrow text-accent">Archivo visual</p>
+					<h1 class="mt-4 max-w-3xl text-h1 font-medium text-ink">
+						El territorio, fotografiado sin prisa.
+					</h1>
+					<p class="measure mt-5 text-lead text-muted">
+						Veintisiete imágenes de paisaje, agua, fauna y cultura. Toca cualquier foto para verla en
+						grande; cada una conserva su crédito y su licencia.
+					</p>
+				</div>
+
+				<div class="flex items-start gap-3 rounded-card border border-line/80 bg-panel p-5">
+					<Icon name="camera" size={20} class="mt-0.5 shrink-0 text-brand" />
+					<p class="text-small text-muted">
+						Fotografías de Wikimedia Commons bajo licencias Creative Commons. Puedes reutilizarlas
+						citando autor y licencia; revisa el detalle en{' '}
+						<a href="/creditos" class="font-semibold text-brand underline">créditos</a>.
+					</p>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="container-page py-10 md:py-14">
+		<div class="flex flex-col gap-4">
+			<div class="flex flex-wrap items-center gap-2" role="group" aria-label="Filtrar galería por categoría">
+				{
+					filterLabels.map((filter) => (
+						<button
+							type="button"
+							class="filter-pill"
+							data-galeria-filter={filter.slug}
+							aria-pressed={filter.slug === 'todas' ? 'true' : 'false'}
+						>
+							{filter.label}
+							<span class="filter-count">{filter.total}</span>
+						</button>
+					))
+				}
+			</div>
+			<p class="text-small text-muted" aria-live="polite">
+				<span data-galeria-count>{photos.length}</span>{' '}
+				<span data-galeria-label>fotografías</span>
+			</p>
+			<noscript>
+				<p class="rounded-field border border-line bg-panel px-4 py-3 text-small text-muted">
+					La filtración necesita JavaScript. Abajo están todas las fotografías.
+				</p>
+			</noscript>
+		</div>
+
+		<ul class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+			{
+				photos.map((photo, index) => {
+					const category = meta[photo.data.category];
+					return (
+						<li
+							class="group relative"
+							data-photo
+							data-category={photo.data.category}
+						>
+							<button
+								type="button"
+								data-lightbox-open
+								data-index={index}
+								class="block w-full overflow-hidden rounded-card border border-line/70 bg-surface text-left transition-[transform,box-shadow] duration-300 ease-out-soft hover:-translate-y-1 hover:shadow-lift focus-visible:outline-2 focus-visible:outline-offset-4"
+							>
+								<span class="sr-only">Ampliar fotografía: </span>
+								<span class="relative block overflow-hidden">
+									<Picture
+										src={photo.data.src}
+										alt={photo.data.alt}
+										formats={['avif', 'webp']}
+										widths={[400, 640, 900]}
+										sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+										loading={index < 3 ? 'eager' : 'lazy'}
+										decoding="async"
+										class="aspect-[4/3] w-full object-cover transition-transform duration-700 ease-out-soft group-hover:scale-[1.04]"
+									/>
+									<span
+										class={`absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[0.68rem] font-bold uppercase tracking-[0.08em] ${category.style}`}
+									>
+										<Icon name={category.icon} size={12} strokeWidth={2} />
+										{category.label}
+									</span>
+									<span class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#07120d]/90 via-[#07120d]/35 to-transparent px-4 pb-3 pt-12 text-[#f7f5ee]">
+										<span class="block text-[0.64rem] font-bold uppercase tracking-[0.14em] text-[#8fc7a8]">
+											{photo.data.location}
+										</span>
+										{photo.data.caption && (
+											<span class="mt-0.5 line-clamp-1 block text-[0.82rem] text-[#f7f5ee]/85">
+												{photo.data.caption}
+											</span>
+										)}
+									</span>
+								</span>
+							</button>
+						</li>
+					);
+				})
+			}
+		</ul>
+
+		<div
+			data-galeria-empty
+			hidden
+			class="mt-8 rounded-panel border border-dashed border-line bg-panel px-6 py-16 text-center"
+		>
+			<p class="font-display text-2xl text-ink">No hay fotos en esta categoría.</p>
+			<p class="mx-auto mt-2 max-w-md text-small text-muted">
+				Prueba con otra categoría para seguir recorriendo el archivo.
+			</p>
+			<Button href="/galeria" class="mt-6" variant="secondary">Ver todas</Button>
+		</div>
+
+		<div class="mt-12 flex flex-col items-start justify-between gap-4 rounded-panel border border-line/80 bg-panel p-6 sm:flex-row sm:items-center">
+			<div>
+				<p class="font-display text-xl font-medium text-ink">¿Quieres usar una imagen?</p>
+				<p class="mt-1 text-small text-muted">
+					Todas están bajo Creative Commons: cita al autor, la licencia y el enlace original.
+				</p>
+			</div>
+			<Button href="/creditos" variant="secondary" icon="arrow-right">Ver créditos</Button>
+		</div>
+	</section>
+
+	<Lightbox />
+
+	<script
+		type="application/json"
+		id="gallery-data"
+		set:html={JSON.stringify(galleryData).replace(/</g, '\\u003c')}
+	/>
+
+	<script>
+		import '../scripts/filter-galeria';
+	</script>
+</Layout>

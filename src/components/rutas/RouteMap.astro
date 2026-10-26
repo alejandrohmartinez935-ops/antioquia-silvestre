@@ -1,0 +1,189 @@
+---
+import type { Destino, Ruta } from '../../lib/content';
+import { difficultyMeta } from '../../lib/content';
+import Icon from '../ui/Icon.astro';
+
+interface Props {
+	rutas: Ruta[];
+	destinos: Destino[];
+}
+
+const { rutas, destinos } = Astro.props;
+const byId = new Map(destinos.map((destino) => [destino.id, destino]));
+
+const positions: Record<string, { x: number; y: number; labelY: number; anchor?: 'start' | 'end' }> = {
+	'santa-rosa-de-osos': { x: 430, y: 165, labelY: 132 },
+	guatape: { x: 600, y: 300, labelY: 267 },
+	'san-rafael': { x: 705, y: 350, labelY: 317 },
+	cocorna: { x: 650, y: 455, labelY: 492 },
+	jardin: { x: 320, y: 455, labelY: 422 },
+	jerico: { x: 255, y: 530, labelY: 567 },
+	tamesis: { x: 210, y: 440, labelY: 407 },
+};
+
+const difficultyFill: Record<string, string> = {
+	facil: 'fill-hike',
+	moderada: 'fill-bird',
+	exigente: 'fill-accent',
+};
+
+const difficultyBg: Record<string, string> = {
+	facil: 'bg-hike',
+	moderada: 'bg-bird',
+	exigente: 'bg-accent',
+};
+
+const nodes = rutas
+	.map((ruta) => {
+		const destino = byId.get(ruta.data.destination);
+		const position = positions[ruta.data.destination];
+		if (!destino || !position) return null;
+		return { ruta, destino, position };
+	})
+	.filter((node): node is NonNullable<typeof node> => node !== null);
+---
+
+<figure class="relative overflow-hidden rounded-panel border border-[#f7f5ee]/10 bg-[#0b1a13] text-[#f7f5ee]">
+	<div class="flex flex-col gap-4 p-6 pb-0 sm:flex-row sm:items-end sm:justify-between sm:p-8 sm:pb-0">
+		<div>
+			<p class="eyebrow text-[#e3b25c]">Mapa ilustrado</p>
+			<h2 id="mapa-rutas" class="mt-3 text-h3 font-medium text-[#f7f5ee]">Siete rutas, un solo departamento</h2>
+			<p class="mt-2 max-w-xl text-small text-[#f7f5ee]/65">
+				Esquema de referencia, no a escala. Toca un punto para ir al itinerario.
+			</p>
+		</div>
+
+		<ul class="flex flex-wrap gap-x-5 gap-y-2 text-[0.7rem] text-[#f7f5ee]/70">
+			{
+				Object.entries(difficultyMeta).map(([key, value]) => (
+					<li class="inline-flex items-center gap-2">
+						<span class={`size-2.5 rounded-full ${difficultyBg[key]}`} />
+						{value.label}
+					</li>
+				))
+			}
+		</ul>
+	</div>
+
+	<div class="relative mt-4">
+		<svg
+			viewBox="0 0 860 640"
+			class="h-auto w-full"
+			role="group"
+			aria-labelledby="mapa-rutas"
+			aria-describedby="mapa-descripcion"
+		>
+			<desc id="mapa-descripcion">
+				Mapa esquemático de Antioquia con siete puntos que representan los destinos descritos más abajo.
+			</desc>
+
+			<defs>
+				<radialGradient id="map-glow" cx="50%" cy="45%" r="60%">
+					<stop offset="0%" stop-color="#1b4d36" stop-opacity="0.55" />
+					<stop offset="100%" stop-color="#0b1a13" stop-opacity="0" />
+				</radialGradient>
+			</defs>
+
+			<rect width="860" height="640" fill="url(#map-glow)" />
+
+			<g fill="none" stroke="#8fc7a8" stroke-opacity="0.14" stroke-width="1">
+				<path d="M40 470c130-70 190-10 270-60s120-140 220-120 160 90 260 40" />
+				<path d="M20 510c130-70 190-10 270-60s120-140 220-120 160 90 260 40" />
+				<path d="M0 390c130-70 190-10 270-60s120-140 220-120 160 90 260 40" />
+				<path d="M60 300c130-70 190-10 270-60s120-140 220-120 160 90 260 40" />
+				<path d="M100 210c130-70 190-10 270-60s120-140 220-120 160 90 260 40" />
+			</g>
+
+			<path
+				d="M330 70 440 42 520 88 610 74 700 132 760 226 722 318 764 418 692 520 566 588 440 612 336 552 246 596 162 520 128 418 176 330 134 232 214 156Z"
+				fill="#143c2a"
+				fill-opacity="0.55"
+				stroke="#8fc7a8"
+				stroke-opacity="0.5"
+				stroke-width="1.6"
+				stroke-linejoin="round"
+			/>
+
+			<g fill="#f7f5ee" fill-opacity="0.28" font-size="11" font-family="Manrope Variable, sans-serif" letter-spacing="2">
+				<text x="400" y="110">NORTE</text>
+				<text x="640" y="250">ORIENTE</text>
+				<text x="180" y="350">SUROESTE</text>
+			</g>
+
+			<g class="routes">
+				{
+					nodes.map(({ ruta, destino, position }) => {
+						const difficulty = difficultyMeta[ruta.data.difficulty];
+						return (
+							<a href={`#${ruta.id}`} class="map-node">
+								<circle cx={position.x} cy={position.y} r="26" class="fill-[#8fc7a8] opacity-0 transition-opacity duration-300" />
+								<circle
+									cx={position.x}
+									cy={position.y}
+									r="13"
+									class={`${difficultyFill[ruta.data.difficulty]} stroke-[#07120d] transition-all duration-300`}
+									stroke-width="3"
+								/>
+								<circle cx={position.x} cy={position.y} r="3.5" fill="#07120d" />
+								<text
+									x={position.x}
+									y={position.labelY}
+									text-anchor="middle"
+									class="fill-[#f7f5ee] text-[15px] font-semibold"
+									font-family="Fraunces Variable, serif"
+								>
+									{destino.data.title}
+								</text>
+								<text
+									x={position.x}
+									y={position.labelY + 17}
+									text-anchor="middle"
+									class="fill-[#8fc7a8] text-[10px]"
+									font-family="Manrope Variable, sans-serif"
+									letter-spacing="1"
+								>
+									{ruta.data.durationDays} DÍAS · {ruta.data.distanceKm} KM
+								</text>
+							</a>
+						);
+					})
+				}
+			</g>
+
+			<g class="pointer-events-none select-none" fill="#8fc7a8" fill-opacity="0.5">
+				<text x="816" y="600" text-anchor="end" font-size="10" font-family="Manrope Variable, sans-serif" letter-spacing="2">
+					ILUSTRACIÓN · NO A ESCALA
+				</text>
+			</g>
+		</svg>
+	</div>
+
+	<figcaption class="flex items-start gap-2 border-t border-[#f7f5ee]/10 bg-[#07120d]/40 px-6 py-4 text-[0.75rem] text-[#f7f5ee]/65 sm:px-8">
+		<Icon name="compass" size={15} class="mt-0.5 shrink-0 text-[#e3b25c]" />
+		<span>
+			Los puntos muestran la ubicación aproximada de cada destino. Las distancias y tiempos
+			corresponden a la ruta descrita, no al trayecto desde Medellín.
+		</span>
+	</figcaption>
+</figure>
+
+<style>
+	.map-node circle:first-child {
+		transform-box: fill-box;
+		transform-origin: center;
+	}
+
+	.map-node:hover circle:first-child,
+	.map-node:focus-visible circle:first-child {
+		opacity: 0.22;
+	}
+
+	.map-node:focus-visible {
+		outline: none;
+	}
+
+	.map-node:focus-visible circle:nth-child(2) {
+		stroke: #e3b25c;
+		stroke-width: 5;
+	}
+</style>

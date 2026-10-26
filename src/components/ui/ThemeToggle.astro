@@ -1,0 +1,19 @@
+---
+import Icon from './Icon.astro';
+---
+
+<button
+	type="button"
+	data-theme-toggle
+	aria-pressed="false"
+	aria-label="Activar modo oscuro"
+	title="Cambiar a modo oscuro"
+	class="relative inline-flex size-11 items-center justify-center rounded-full border border-line/70 bg-panel/60 text-ink transition-colors hover:border-brand/40 hover:bg-surface focus-visible:outline-2"
+>
+	<Icon name="moon" size={19} class="block dark:hidden" />
+	<Icon name="sun" size={19} class="hidden dark:block" />
+</button>
+
+<script>
+	import '../../scripts/theme-toggle';
+</script>

@@ -1,0 +1,162 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Breadcrumbs from '../components/ui/Breadcrumbs.astro';
+import Prose from '../components/ui/Prose.astro';
+import Button from '../components/ui/Button.astro';
+import Icon from '../components/ui/Icon.astro';
+import { site } from '../data/site';
+
+const updated = 'octubre de 2026';
+
+const schema = {
+	'@context': 'https://schema.org',
+	'@type': 'WebPage',
+	name: 'Política de privacidad · Antioquia Silvestre',
+	url: `${site.url}/privacidad`,
+	description: 'Cómo trata Antioquia Silvestre los datos personales recolectados en su formulario de contacto.',
+};
+---
+
+<Layout
+	title="Política de privacidad"
+	description="Política de privacidad de Antioquia Silvestre: qué datos recolectamos en el formulario de contacto, para qué los usamos y cómo ejercer tus derechos."
+	schema={schema}
+>
+	<section class="border-b border-line/70 bg-surface/50">
+		<div class="container-page py-14 md:py-20">
+			<Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'Privacidad' }]} />
+
+			<div class="mt-8 max-w-3xl">
+				<p class="eyebrow text-accent">Legal</p>
+				<h1 class="mt-4 text-h1 font-medium text-ink">Política de privacidad.</h1>
+				<p class="measure mt-5 text-lead text-muted">
+					Este sitio es una demostración educativa. Aun así, el formulario de contacto está
+					diseñado para tratar tus datos con el mínimo necesario y sin usos publicitarios.
+				</p>
+				<p class="mt-4 text-[0.75rem] uppercase tracking-[0.1em] text-muted">
+					Última actualización: {updated}
+				</p>
+			</div>
+		</div>
+	</section>
+
+	<section class="container-page grid gap-12 py-12 md:py-16 lg:grid-cols-[1fr_18rem] lg:gap-16">
+		<Prose>
+			<h2>Quién trata tus datos</h2>
+			<p>
+				El responsable es <strong>Antioquia Silvestre</strong>, proyecto editorial de demostración
+				con sede en {site.location}. Puedes escribir a
+				<a href={`mailto:${site.email}`}>{site.email}</a> para cualquier asunto relacionado con esta
+				política.
+			</p>
+
+			<h2>Qué datos recolectamos</h2>
+			<p>Solo recolectamos lo que escribes en el formulario de contacto:</p>
+			<ul>
+				<li>Nombre.</li>
+				<li>Correo electrónico.</li>
+				<li>Teléfono, si decides indicarlo.</li>
+				<li>Destino de interés, número de personas y fechas o temporada.</li>
+				<li>El mensaje que nos escribes y la aceptación del tratamiento de datos.</li>
+			</ul>
+			<p>
+				Además, el servidor registra temporalmente la dirección IP para aplicar un límite de envíos
+				y evitar abusos. Ese registro vive en memoria, no se guarda en base de datos y se descarta a
+				los pocos minutos.
+			</p>
+
+			<h2>Para qué los usamos</h2>
+			<p>
+				Únicamente para responder tu consulta y, si decides continuar, para preparar una propuesta
+				de viaje. No usamos tus datos para publicidad, no los vendemos y no los compartimos con
+				terceros ajenos a la operación del sitio.
+			</p>
+
+			<h2>Base legal</h2>
+			<p>
+				El tratamiento se basa en tu consentimiento expreso, que otorgas al marcar la casilla del
+				formulario. Puedes retirarlo en cualquier momento escribiéndonos.
+			</p>
+
+			<h2>Dónde se alojan</h2>
+			<p>
+				El sitio se despliega en Vercel. Si el envío de correo está configurado, la entrega se hace
+				a través de Resend, que procesa el mensaje para hacerlo llegar a nuestra bandeja. Cuando el
+				correo no está configurado, el formulario te ofrece continuar por WhatsApp y no almacena tu
+				consulta.
+			</p>
+			<p>
+				Los enlaces de WhatsApp abren un servicio de Meta con sus propias políticas. No controlamos
+				ese tratamiento.
+			</p>
+
+			<h2>Cookies y almacenamiento local</h2>
+			<p>
+				No usamos cookies de publicidad ni de analítica. Guardamos una sola preferencia en el
+				almacenamiento local de tu navegador (<code>as-theme</code>) para recordar si prefieres el
+				tema claro u oscuro. Puedes borrarla desde la configuración de tu navegador.
+			</p>
+
+			<h2>Cuánto tiempo los conservamos</h2>
+			<p>
+				Las consultas se conservan hasta 12 meses después del último contacto, o menos si pides su
+				eliminación antes.
+			</p>
+
+			<h2>Tus derechos</h2>
+			<p>
+				Puedes solicitar acceso, corrección, actualización o eliminación de tus datos, así como
+				revocar la autorización, escribiendo a <a href={`mailto:${site.email}`}>{site.email}</a>.
+				Responderemos en un plazo máximo de 15 días hábiles.
+			</p>
+
+			<h2>Menores de edad</h2>
+			<p>
+				El formulario está pensado para personas mayores de 18 años. Si viajas con menores, sus
+				datos deben ser suministrados por su representante legal.
+			</p>
+
+			<h2>Cambios en esta política</h2>
+			<p>
+				Si modificamos esta política, actualizaremos la fecha del encabezado. Los cambios aplican
+				desde su publicación en esta página.
+			</p>
+		</Prose>
+
+		<div class="lg:sticky lg:top-24 lg:self-start">
+			<div class="rounded-panel border border-line/80 bg-panel p-6">
+				<p class="eyebrow text-accent">En resumen</p>
+				<ul class="mt-4 space-y-3 text-small text-muted">
+					<li class="flex gap-2.5">
+						<Icon name="check" size={16} class="mt-0.5 shrink-0 text-brand" />
+						Sin cookies de publicidad ni rastreadores.
+					</li>
+					<li class="flex gap-2.5">
+						<Icon name="check" size={16} class="mt-0.5 shrink-0 text-brand" />
+						Tus datos solo se usan para responderte.
+					</li>
+					<li class="flex gap-2.5">
+						<Icon name="check" size={16} class="mt-0.5 shrink-0 text-brand" />
+						Puedes pedir su eliminación cuando quieras.
+					</li>
+					<li class="flex gap-2.5">
+						<Icon name="check" size={16} class="mt-0.5 shrink-0 text-brand" />
+						El tema claro/oscuro se guarda en tu navegador.
+					</li>
+				</ul>
+				<Button href="/contacto" class="mt-6 w-full" icon="arrow-right">
+					Escribirnos
+				</Button>
+			</div>
+
+			<div class="mt-4 rounded-card border border-ochre/30 bg-bird-soft/40 p-4">
+				<p class="flex items-start gap-2 text-[0.75rem] leading-relaxed text-ink/80">
+					<Icon name="alert" size={15} class="mt-0.5 shrink-0 text-ochre" />
+					<span>
+						Demostración educativa: los datos de contacto, el RNT y los precios son ficticios.
+					</span>
+				</p>
+			</div>
+		</div>
+	</section>
+</Layout>

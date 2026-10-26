@@ -1,0 +1,97 @@
+---
+import { site } from '../../data/site';
+import { whatsappLink } from '../../lib/utils';
+import Icon from '../ui/Icon.astro';
+
+const year = new Date().getFullYear();
+const reserveLink = whatsappLink('Hola, quiero información sobre una experiencia en Antioquia.', site.whatsapp);
+---
+
+<footer class="mt-auto bg-[#0b1a13] text-[#f7f5ee]">
+	<div class="container-page grid gap-12 py-16 md:grid-cols-[1.4fr_1fr_1fr_1.2fr] md:py-20">
+		<div class="space-y-5">
+			<a href="/" class="inline-flex items-center gap-2.5" aria-label={`${site.name} — inicio`}>
+				<span class="grid size-10 place-items-center rounded-full bg-[#8fc7a8] text-[#07120d]">
+					<svg viewBox="0 0 32 32" class="size-6" aria-hidden="true" fill="none">
+						<path d="M16 27c0-7 4-12 11-13 0 7-4 12-11 13Z" fill="currentColor" opacity=".55" />
+						<path d="M16 27C9 27 5 22 5 15c7 0 11 5 11 12Z" fill="currentColor" />
+						<path d="M7 25c3-7 8-12 16-17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+					</svg>
+				</span>
+				<span class="font-display text-xl font-semibold">Antioquia Silvestre</span>
+			</a>
+			<p class="max-w-xs text-sm leading-relaxed text-[#f7f5ee]/70">
+				Una guía editorial para caminar Antioquia con calma: menos prisa, más territorio, siempre con
+				guías locales.
+			</p>
+			<p class="flex items-center gap-2 text-sm text-[#8fc7a8]">
+				<Icon name="pin" size={16} />
+				{site.location}
+			</p>
+		</div>
+
+		<nav aria-label="Explorar" class="space-y-3 text-sm">
+			<h2 class="eyebrow text-[#f7f5ee]/50">Explorar</h2>
+			<ul class="space-y-2">
+				{site.nav
+					.filter((item) => item.href !== '/contacto')
+					.map((item) => (
+						<li>
+							<a class="text-[#f7f5ee]/80 transition-colors hover:text-[#8fc7a8]" href={item.href}>
+								{item.label}
+							</a>
+						</li>
+					))}
+			</ul>
+		</nav>
+
+		<nav aria-label="Información" class="space-y-3 text-sm">
+			<h2 class="eyebrow text-[#f7f5ee]/50">Información</h2>
+			<ul class="space-y-2">
+				<li><a class="text-[#f7f5ee]/80 transition-colors hover:text-[#8fc7a8]" href="/contacto">Contacto</a></li>
+				<li><a class="text-[#f7f5ee]/80 transition-colors hover:text-[#8fc7a8]" href="/privacidad">Privacidad</a></li>
+				<li><a class="text-[#f7f5ee]/80 transition-colors hover:text-[#8fc7a8]" href="/terminos">Términos</a></li>
+				<li><a class="text-[#f7f5ee]/80 transition-colors hover:text-[#8fc7a8]" href="/creditos">Créditos</a></li>
+			</ul>
+		</nav>
+
+		<div class="space-y-4 text-sm">
+			<h2 class="eyebrow text-[#f7f5ee]/50">Hablemos</h2>
+			<a
+				href={reserveLink}
+				target="_blank"
+				rel="noopener noreferrer"
+				class="inline-flex items-center gap-2 rounded-full bg-[#8fc7a8] px-4 py-2.5 font-semibold text-[#07120d] transition-colors hover:bg-[#a7d6bc]"
+			>
+				<Icon name="whatsapp" size={17} />
+				WhatsApp
+			</a>
+			<ul class="space-y-2 text-[#f7f5ee]/75">
+				<li>
+					<a class="inline-flex items-center gap-2 hover:text-[#8fc7a8]" href={`mailto:${site.email}`}>
+						<Icon name="mail" size={15} />
+						{site.email}
+					</a>
+				</li>
+				<li class="flex items-center gap-2">
+					<Icon name="clock" size={15} />
+					{site.schedule}
+				</li>
+				<li class="flex items-center gap-2">
+					<Icon name="shield" size={15} />
+					{site.rnt}
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<div class="border-t border-[#f7f5ee]/10">
+		<div class="container-page flex flex-col gap-4 py-5 text-xs text-[#f7f5ee]/55 md:flex-row md:items-center md:justify-between">
+			<p class="flex items-start gap-2 md:max-w-xl">
+				<Icon name="alert" size={14} class="mt-0.5 shrink-0 text-[#e3b25c]" />
+				<span>{site.demoNotice}</span>
+			</p>
+			<p>© {year} {site.name} · Hecho en Antioquia</p>
+		</div>
+	</div>
+</footer>

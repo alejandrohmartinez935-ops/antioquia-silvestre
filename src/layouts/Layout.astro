@@ -1,23 +1,63 @@
+---
+import '../styles/global.css';
+import Footer from '../components/layout/Footer.astro';
+import Header from '../components/layout/Header.astro';
+import BaseHead from '../components/seo/BaseHead.astro';
+
+interface Props {
+	title?: string;
+	description?: string;
+	image?: string;
+	noindex?: boolean;
+	type?: 'website' | 'article';
+	schema?: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const { title, description, image, noindex, type, schema } = Astro.props;
+---
+
 <!doctype html>
-<html lang="en">
+<html lang="es-CO" data-theme="light">
 	<head>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+		<script is:inline>
+			(() => {
+				const root = document.documentElement;
+				let stored = null;
+				try {
+					stored = localStorage.getItem('as-theme');
+				} catch {
+					stored = null;
+				}
+				const preferred =
+					stored === 'light' || stored === 'dark'
+						? stored
+						: window.matchMedia('(prefers-color-scheme: dark)').matches
+							? 'dark'
+							: 'light';
+				root.dataset.theme = preferred;
+				root.classList.add('js');
+			})();
+		</script>
+		<BaseHead
+			title={title}
+			description={description}
+			image={image}
+			noindex={noindex}
+			type={type}
+			schema={schema}
+		/>
 	</head>
-	<body>
-		<slot />
+	<body class="flex min-h-dvh flex-col bg-canvas text-ink antialiased">
+		<a class="skip-link" href="#contenido">Saltar al contenido</a>
+		<Header />
+		<main id="contenido" tabindex="-1" class="flex-1">
+			<slot />
+		</main>
+		<Footer />
+		<script>
+			import '../scripts/reveal';
+		</script>
 	</body>
 </html>
-
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>

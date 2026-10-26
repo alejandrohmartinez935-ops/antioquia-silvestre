@@ -1,0 +1,190 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Breadcrumbs from '../components/ui/Breadcrumbs.astro';
+import Button from '../components/ui/Button.astro';
+import Icon from '../components/ui/Icon.astro';
+import { site } from '../data/site';
+import { getDestinos, getGaleria } from '../lib/content';
+
+const [fotos, destinos] = await Promise.all([getGaleria(), getDestinos()]);
+const byId = new Map(destinos.map((destino) => [destino.id, destino.data.title]));
+
+const groups = new Map<string, typeof fotos>();
+for (const foto of fotos) {
+	const key = foto.data.destination ? (byId.get(foto.data.destination) ?? 'Otros lugares') : 'Otros lugares';
+	const list = groups.get(key) ?? [];
+	list.push(foto);
+	groups.set(key, list);
+}
+
+const credits = [...groups.entries()].sort(([a], [b]) => a.localeCompare(b, 'es'));
+const licenses = [...new Set(fotos.map((foto) => foto.data.credit.license))].sort();
+
+const schema = {
+	'@context': 'https://schema.org',
+	'@type': 'WebPage',
+	name: 'Créditos y licencias · Antioquia Silvestre',
+	url: `${site.url}/creditos`,
+	description: 'Créditos de las fotografías, tipografías y recursos usados en Antioquia Silvestre.',
+};
+---
+
+<Layout
+	title="Créditos y licencias"
+	description="Créditos de las fotografías de Wikimedia Commons, tipografías y recursos visuales usados en Antioquia Silvestre, con su licencia correspondiente."
+	schema={schema}
+>
+	<section class="border-b border-line/70 bg-surface/50">
+		<div class="container-page py-14 md:py-20">
+			<Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'Créditos' }]} />
+
+			<div class="mt-8 max-w-3xl">
+				<p class="eyebrow text-accent">Transparencia</p>
+				<h1 class="mt-4 text-h1 font-medium text-ink">Créditos y licencias.</h1>
+				<p class="measure mt-5 text-lead text-muted">
+					Este sitio usa fotografías de Wikimedia Commons bajo licencias Creative Commons. Cada
+					imagen conserva el crédito de su autor y su licencia; si vas a reutilizarlas, cita la
+					fuente original.
+				</p>
+			</div>
+
+			<div class="mt-8 flex flex-wrap gap-2">
+				{
+					licenses.map((license) => (
+						<span class="inline-flex items-center gap-1.5 rounded-full border border-line bg-panel px-3 py-1.5 text-[0.72rem] font-semibold text-muted">
+							<Icon name="shield" size={13} class="text-brand" />
+							{license}
+						</span>
+					))
+				}
+			</div>
+		</div>
+	</section>
+
+	<section class="container-page py-12 md:py-16">
+		<div class="max-w-3xl">
+			<h2 class="text-h3 font-medium text-ink">Fotografías</h2>
+			<p class="mt-2 text-small text-muted">
+				{ fotos.length } imágenes de { groups.size } destinos. Los enlaces llevan a la ficha original
+				en Wikimedia Commons, donde están los términos completos de cada licencia.
+			</p>
+		</div>
+
+		<div class="mt-10 space-y-12">
+			{
+				credits.map(([group, items]) => (
+					<section aria-labelledby={`creditos-${group.replace(/\s+/g, '-').toLowerCase()}`}>
+						<h3
+							id={`creditos-${group.replace(/\s+/g, '-').toLowerCase()}`}
+							class="flex items-center gap-3 border-b border-line pb-3 font-display text-xl font-medium text-ink"
+						>
+							<span class="size-1.5 rounded-full bg-accent" />
+							{group}
+							<span class="text-small font-normal text-muted">({items.length})</span>
+						</h3>
+
+						<ul class="divide-y divide-line/70">
+							{items.map((foto) => (
+								<li class="flex flex-col gap-1 py-4 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
+									<div class="min-w-0">
+										<p class="text-small font-semibold text-ink">
+											{foto.data.caption ?? foto.data.alt}
+										</p>
+										<p class="mt-0.5 text-[0.75rem] text-muted">
+											{foto.data.location} · {foto.data.category}
+										</p>
+									</div>
+									<p class="shrink-0 text-[0.78rem] text-muted sm:text-right">
+										<span class="font-semibold text-ink">{foto.data.credit.author}</span>
+										{' · '}
+										{foto.data.credit.license}
+										{foto.data.credit.url && (
+											<>
+												{' · '}
+												<a
+													href={foto.data.credit.url}
+													target="_blank"
+													rel="noopener noreferrer"
+													class="font-semibold text-brand underline decoration-brand/40 underline-offset-2 hover:decoration-brand"
+												>
+													Ver original
+												</a>
+											</>
+										)}
+									</p>
+								</li>
+							))}
+						</ul>
+					</section>
+				))
+			}
+		</div>
+	</section>
+
+	<section class="border-t border-line/70 bg-surface/40">
+		<div class="container-page py-section">
+			<div class="grid gap-8 md:grid-cols-3">
+				<div class="rounded-card border border-line/80 bg-panel p-6">
+					<span class="grid size-10 place-items-center rounded-full bg-hike-soft text-hike">
+						<Icon name="compass" size={19} />
+					</span>
+					<h2 class="mt-4 font-display text-xl font-medium text-ink">Tipografías</h2>
+					<p class="mt-2 text-small text-muted">
+						Fraunces Variable y Manrope Variable, distribuidas por Fontsource bajo la licencia SIL
+						Open Font License 1.1.
+					</p>
+					<a
+						href="https://openfontlicense.org"
+						target="_blank"
+						rel="noopener noreferrer"
+						class="mt-3 inline-flex items-center gap-1.5 text-small font-semibold text-brand underline"
+					>
+						Leer la licencia
+						<Icon name="arrow-up-right" size={14} />
+					</a>
+				</div>
+
+				<div class="rounded-card border border-line/80 bg-panel p-6">
+					<span class="grid size-10 place-items-center rounded-full bg-water-soft text-water">
+						<Icon name="camera" size={19} />
+					</span>
+					<h2 class="mt-4 font-display text-xl font-medium text-ink">Ilustraciones e iconos</h2>
+					<p class="mt-2 text-small text-muted">
+						El mapa de rutas es una ilustración SVG original y esquemática, no cartográfica. Los
+						iconos son trazos propios inspirados en señalética de senderos.
+					</p>
+				</div>
+
+				<div class="rounded-card border border-line/80 bg-panel p-6">
+					<span class="grid size-10 place-items-center rounded-full bg-bird-soft text-bird">
+						<Icon name="leaf" size={19} />
+					</span>
+					<h2 class="mt-4 font-display text-xl font-medium text-ink">Tecnología</h2>
+					<p class="mt-2 text-small text-muted">
+						Construido con Astro, Tailwind CSS y TypeScript. Imágenes optimizadas con Sharp y
+						desplegado en Vercel.
+					</p>
+					<a
+						href="https://astro.build"
+						target="_blank"
+						rel="noopener noreferrer"
+						class="mt-3 inline-flex items-center gap-1.5 text-small font-semibold text-brand underline"
+					>
+						astro.build
+						<Icon name="arrow-up-right" size={14} />
+					</a>
+				</div>
+			</div>
+
+			<div class="mt-10 flex flex-col items-start justify-between gap-4 rounded-panel border border-ochre/30 bg-bird-soft/40 p-6 sm:flex-row sm:items-center">
+				<p class="flex items-start gap-3 text-small text-ink/80">
+					<Icon name="alert" size={18} class="mt-0.5 shrink-0 text-ochre" />
+					<span>{site.demoNotice}</span>
+				</p>
+				<Button href="/galeria" variant="secondary" class="shrink-0" icon="arrow-right">
+					Volver a la galería
+				</Button>
+			</div>
+		</div>
+	</section>
+</Layout>

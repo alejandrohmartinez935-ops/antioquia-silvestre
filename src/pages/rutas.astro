@@ -1,0 +1,270 @@
+---
+import { render } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import Breadcrumbs from '../components/ui/Breadcrumbs.astro';
+import Button from '../components/ui/Button.astro';
+import DifficultyBadge from '../components/destinos/DifficultyBadge.astro';
+import Icon from '../components/ui/Icon.astro';
+import Prose from '../components/ui/Prose.astro';
+import RouteMap from '../components/rutas/RouteMap.astro';
+import { site } from '../data/site';
+import { difficultyMeta, getDestinos, getRutas } from '../lib/content';
+import { whatsappLink } from '../lib/utils';
+
+const [rutas, destinos] = await Promise.all([getRutas(), getDestinos()]);
+const byId = new Map(destinos.map((destino) => [destino.id, destino]));
+
+const rendered = await Promise.all(
+	rutas.map(async (ruta) => ({ id: ruta.id, Content: (await render(ruta)).Content })),
+);
+const contentById = new Map(rendered.map((item) => [item.id, item.Content]));
+
+const totalKm = rutas.reduce((sum, ruta) => sum + ruta.data.distanceKm, 0);
+const totalDays = rutas.reduce((sum, ruta) => sum + ruta.data.durationDays, 0);
+
+const reserveLink = whatsappLink(
+	'Hola, quiero información sobre las rutas de senderismo y naturaleza en Antioquia.',
+	site.whatsapp,
+);
+
+const schema = {
+	'@context': 'https://schema.org',
+	'@type': 'ItemList',
+	name: 'Rutas de ecoturismo en Antioquia',
+	itemListElement: rutas.map((ruta, index) => ({
+		'@type': 'ListItem',
+		position: index + 1,
+		name: ruta.data.title,
+		url: `${site.url}/rutas#${ruta.id}`,
+	})),
+};
+---
+
+<Layout
+	title="Rutas e itinerarios"
+	description="Siete rutas de ecoturismo en Antioquia con dificultad, duración, distancia, desnivel e itinerario día por día. Mapa ilustrado y recomendaciones prácticas."
+	schema={schema}
+>
+	<section class="border-b border-line/70 bg-surface/50">
+		<div class="container-page py-14 md:py-20">
+			<Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'Rutas' }]} />
+
+			<div class="mt-8 grid gap-10 lg:grid-cols-[1.3fr_0.7fr] lg:items-end">
+				<div>
+					<p class="eyebrow text-accent">Itinerarios</p>
+					<h1 class="mt-4 max-w-3xl text-h1 font-medium text-ink">
+						Rutas para caminar Antioquia sin adivinar.
+					</h1>
+					<p class="measure mt-5 text-lead text-muted">
+						Cada ruta incluye dificultad, distancia, desnivel, mejor temporada y un plan día por
+						día. Son propuestas de referencia: ajústalas con un guía local antes de salir.
+					</p>
+				</div>
+
+				<dl class="grid grid-cols-3 gap-4 border-t border-line pt-6 lg:border-t-0 lg:border-l lg:pl-8 lg:pt-0">
+					<div>
+						<dt class="text-[0.65rem] uppercase tracking-[0.12em] text-muted">Rutas</dt>
+						<dd class="font-display text-3xl text-brand">{rutas.length}</dd>
+					</div>
+					<div>
+						<dt class="text-[0.65rem] uppercase tracking-[0.12em] text-muted">Días</dt>
+						<dd class="font-display text-3xl text-brand">{totalDays}</dd>
+					</div>
+					<div>
+						<dt class="text-[0.65rem] uppercase tracking-[0.12em] text-muted">Kilómetros</dt>
+						<dd class="font-display text-3xl text-brand">{Math.round(totalKm)}</dd>
+					</div>
+				</dl>
+			</div>
+		</div>
+	</section>
+
+	<section class="container-page py-10 md:py-14" aria-labelledby="mapa-rutas">
+		<RouteMap rutas={rutas} destinos={destinos} />
+
+		<nav aria-label="Ir a una ruta" class="mt-6 flex flex-wrap gap-2">
+			{
+				rutas.map((ruta) => {
+					const destino = byId.get(ruta.data.destination);
+					return (
+						<a
+							href={`#${ruta.id}`}
+							class="inline-flex items-center gap-2 rounded-full border border-line bg-panel px-3.5 py-2 text-[0.78rem] font-semibold text-ink transition-colors hover:border-brand hover:text-brand"
+						>
+							<span class={`size-2 rounded-full ${difficultyMeta[ruta.data.difficulty].dot}`} />
+							{destino?.data.title ?? ruta.data.title}
+						</a>
+					);
+				})
+			}
+		</nav>
+	</section>
+
+	<div class="container-page pb-section">
+		<div class="space-y-10 md:space-y-14">
+			{
+				rutas.map((ruta, index) => {
+					const destino = byId.get(ruta.data.destination);
+					const difficulty = difficultyMeta[ruta.data.difficulty];
+					const Content = contentById.get(ruta.id);
+					return (
+						<article
+							id={ruta.id}
+							class="scroll-mt-28 overflow-hidden rounded-panel border border-line/80 bg-panel shadow-soft"
+						>
+							<div class="grid lg:grid-cols-[0.85fr_1.15fr]">
+								<div class="relative flex flex-col gap-6 border-b border-line/70 bg-surface/40 p-6 sm:p-8 lg:border-b-0 lg:border-r">
+									<div class="flex items-start justify-between gap-4">
+										<div>
+											<p class="flex items-center gap-2 text-[0.68rem] font-bold uppercase tracking-[0.12em] text-accent">
+												<span>Ruta {String(index + 1).padStart(2, '0')}</span>
+												<span class="size-1 rounded-full bg-accent/50" />
+												<span>{destino?.data.region}</span>
+											</p>
+											<h2 class="mt-3 font-display text-3xl font-medium leading-tight text-ink">
+												{ruta.data.title}
+											</h2>
+											{destino && (
+												<p class="mt-2 text-small text-muted">
+													Destino base: {destino.data.title} · {destino.data.municipality}
+												</p>
+											)}
+										</div>
+									</div>
+
+									<div class="flex flex-wrap items-center gap-2">
+										<DifficultyBadge difficulty={ruta.data.difficulty} />
+										<span class="inline-flex items-center gap-1.5 rounded-full border border-line bg-panel px-2.5 py-1 text-[0.7rem] font-semibold text-muted">
+											<Icon name="clock" size={13} />
+											{ruta.data.durationDays} {ruta.data.durationDays === 1 ? 'día' : 'días'}
+										</span>
+										<span class="inline-flex items-center gap-1.5 rounded-full border border-line bg-panel px-2.5 py-1 text-[0.7rem] font-semibold text-muted">
+											<Icon name="route" size={13} />
+											{ruta.data.distanceKm} km
+										</span>
+										{ruta.data.elevationGainM && (
+											<span class="inline-flex items-center gap-1.5 rounded-full border border-line bg-panel px-2.5 py-1 text-[0.7rem] font-semibold text-muted">
+												<Icon name="altitude" size={13} />
+												+{ruta.data.elevationGainM} m
+											</span>
+										)}
+									</div>
+
+									<dl class="space-y-3 text-small">
+										<div class="flex gap-2">
+											<dt class="w-24 shrink-0 text-[0.66rem] font-bold uppercase tracking-[0.1em] text-muted">
+												Salida
+											</dt>
+											<dd class="text-ink">{ruta.data.startPoint}</dd>
+										</div>
+										<div class="flex gap-2">
+											<dt class="w-24 shrink-0 text-[0.66rem] font-bold uppercase tracking-[0.1em] text-muted">
+												Temporada
+											</dt>
+											<dd class="text-ink">{ruta.data.season}</dd>
+										</div>
+										<div class="flex gap-2">
+											<dt class="w-24 shrink-0 text-[0.66rem] font-bold uppercase tracking-[0.1em] text-muted">
+												Coordenadas
+											</dt>
+											<dd class="tabular-nums text-ink">
+												{ruta.data.coordinates.lat.toFixed(4)}, {ruta.data.coordinates.lng.toFixed(4)}
+											</dd>
+										</div>
+									</dl>
+
+									{Content && (
+										<Prose class="text-small">
+											<Content />
+										</Prose>
+									)}
+
+									<div class="mt-auto flex flex-wrap gap-2">
+										{destino && (
+											<Button
+												href={`/destinos/${destino.id}`}
+												variant="secondary"
+												size="sm"
+												icon="arrow-up-right"
+											>
+												Ver el destino
+											</Button>
+										)}
+										<Button
+											href={reserveLink}
+											target="_blank"
+											rel="noopener noreferrer"
+											size="sm"
+											icon="whatsapp"
+											iconPosition="left"
+										>
+											Consultar
+										</Button>
+									</div>
+								</div>
+
+								<div class="p-6 sm:p-8">
+									<h3 class="text-h3 font-medium text-ink">Itinerario día por día</h3>
+
+									<ol class="mt-6 space-y-6">
+										{ruta.data.itinerary.map((day) => (
+											<li class="relative border-l border-line pl-6">
+												<span class="absolute -left-[15px] top-0 grid size-[30px] place-items-center rounded-full bg-brand font-display text-[0.72rem] font-semibold text-on-brand">
+													D{day.day}
+												</span>
+												<h4 class="pl-2 font-display text-xl font-medium text-ink">{day.title}</h4>
+												<p class="mt-1 pl-2 text-small text-muted">{day.description}</p>
+												<ul class="mt-3 flex flex-wrap gap-2 pl-2">
+													{day.activities.map((activity) => (
+														<li class="inline-flex items-center gap-1.5 rounded-full bg-surface px-2.5 py-1 text-[0.72rem] text-ink">
+															<Icon name="check" size={12} class="text-brand" />
+															{activity}
+														</li>
+													))}
+												</ul>
+											</li>
+										))}
+									</ol>
+
+									<div class="mt-8 rounded-card border border-ochre/30 bg-bird-soft/50 p-5">
+										<h4 class="flex items-center gap-2 text-[0.72rem] font-bold uppercase tracking-[0.1em] text-bird">
+											<Icon name="alert" size={15} />
+											Ten en cuenta
+										</h4>
+										<ul class="mt-3 space-y-2">
+											{ruta.data.recommendations.map((recommendation) => (
+												<li class="flex gap-2 text-small text-ink/85">
+													<span class="mt-2 size-1 shrink-0 rounded-full bg-ochre" />
+													{recommendation}
+												</li>
+											))}
+										</ul>
+									</div>
+
+									<p class="mt-5 flex items-start gap-2 text-[0.7rem] leading-relaxed text-muted">
+										<Icon name="alert" size={13} class="mt-0.5 shrink-0 text-ochre" />
+										Información de referencia. Confirma condiciones, permisos y guía antes de
+										salir.
+									</p>
+								</div>
+							</div>
+						</article>
+					);
+				})
+			}
+		</div>
+
+		<div class="mt-12 flex flex-col items-start justify-between gap-4 rounded-panel bg-brand p-6 text-on-brand sm:flex-row sm:items-center sm:p-8">
+			<div>
+				<h2 class="font-display text-2xl font-medium">¿Armamos una ruta a tu medida?</h2>
+				<p class="mt-1 max-w-xl text-small text-on-brand/80">
+					Dinos cuántos días tienes, con quién viajas y qué quieres ver. Te respondemos con una
+					propuesta concreta.
+				</p>
+			</div>
+			<Button href="/contacto" variant="inverse" class="shrink-0" icon="arrow-right">
+				Pedir propuesta
+			</Button>
+		</div>
+	</div>
+</Layout>

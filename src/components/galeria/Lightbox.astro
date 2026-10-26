@@ -1,0 +1,62 @@
+---
+import Icon from '../ui/Icon.astro';
+---
+
+<dialog
+	id="lightbox"
+	aria-label="Visor de fotografías"
+	class="m-auto w-[min(94vw,68rem)] max-w-none rounded-panel border border-line bg-panel p-0 text-ink shadow-lift backdrop:bg-[#07120d]/90 backdrop:backdrop-blur-sm"
+>
+	<div class="relative">
+		<div class="relative grid min-h-[40vh] place-items-center bg-[#07120d]">
+			<img
+				data-lightbox-image
+				src=""
+				alt=""
+				class="max-h-[70vh] w-full object-contain"
+				width="1600"
+				height="1067"
+			/>
+			<button
+				type="button"
+				data-lightbox-close
+				aria-label="Cerrar visor"
+				class="absolute right-3 top-3 grid size-11 place-items-center rounded-full bg-[#07120d]/70 text-[#f7f5ee] backdrop-blur transition-colors hover:bg-[#07120d]"
+			>
+				<Icon name="close" size={20} />
+			</button>
+		</div>
+
+		<div class="flex flex-col gap-4 p-5 sm:flex-row sm:items-end sm:justify-between sm:p-6">
+			<div class="min-w-0" aria-live="polite">
+				<p data-lightbox-location class="eyebrow text-accent"></p>
+				<p data-lightbox-caption class="mt-1.5 font-display text-xl leading-snug text-ink"></p>
+				<p data-lightbox-credit class="mt-2 text-[0.72rem] text-muted"></p>
+			</div>
+
+			<div class="flex shrink-0 items-center gap-2">
+				<button
+					type="button"
+					data-lightbox-prev
+					aria-label="Fotografía anterior"
+					class="grid size-10 place-items-center rounded-full border border-line text-ink transition-colors hover:bg-surface"
+				>
+					<Icon name="arrow-right" size={17} class="rotate-180" />
+				</button>
+				<span data-lightbox-counter class="min-w-14 text-center text-small tabular-nums text-muted"></span>
+				<button
+					type="button"
+					data-lightbox-next
+					aria-label="Fotografía siguiente"
+					class="grid size-10 place-items-center rounded-full border border-line text-ink transition-colors hover:bg-surface"
+				>
+					<Icon name="arrow-right" size={17} />
+				</button>
+			</div>
+		</div>
+	</div>
+</dialog>
+
+<script>
+	import '../../scripts/lightbox';
+</script>

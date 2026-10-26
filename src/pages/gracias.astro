@@ -1,0 +1,45 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Button from '../components/ui/Button.astro';
+import Icon from '../components/ui/Icon.astro';
+import { site } from '../data/site';
+import { whatsappLink } from '../lib/utils';
+
+const whatsapp = whatsappLink(
+	'Hola, acabo de enviar el formulario de contacto y quiero confirmar que lo recibieron.',
+	site.whatsapp,
+);
+---
+
+<Layout
+	title="Gracias por escribir"
+	description="Recibimos tu mensaje. Te responderemos al correo indicado en un plazo de un día hábil."
+	noindex={true}
+>
+	<section class="container-page flex min-h-[60vh] items-center py-16 md:py-24">
+		<div class="mx-auto max-w-xl text-center">
+			<span class="mx-auto grid size-16 place-items-center rounded-full bg-brand/10 text-brand">
+				<Icon name="check" size={30} />
+			</span>
+			<p class="eyebrow mt-6 text-accent">Mensaje recibido</p>
+			<h1 class="mt-3 text-h1 font-medium text-ink">Gracias por escribirnos.</h1>
+			<p class="mt-4 text-body text-muted">
+				Revisaremos tu consulta y te responderemos al correo que indicaste en un plazo de un día
+				hábil. Si prefieres algo más inmediato, escríbenos por WhatsApp.
+			</p>
+
+			<div class="mt-8 flex flex-wrap justify-center gap-3">
+				<Button href={whatsapp} target="_blank" rel="noopener noreferrer" icon="whatsapp" iconPosition="left">
+					Abrir WhatsApp
+				</Button>
+				<Button href="/rutas" variant="secondary" icon="arrow-right">
+					Explorar rutas
+				</Button>
+			</div>
+
+			<p class="mt-10 text-[0.75rem] leading-relaxed text-muted">
+				{site.demoNotice}
+			</p>
+		</div>
+	</section>
+</Layout>

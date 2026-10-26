@@ -1,0 +1,137 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Breadcrumbs from '../components/ui/Breadcrumbs.astro';
+import ContactForm from '../components/contacto/ContactForm.astro';
+import Icon from '../components/ui/Icon.astro';
+import { site } from '../data/site';
+import { getDestinos } from '../lib/content';
+
+const destinos = await getDestinos();
+
+const faqs = [
+	{
+		question: '¿Los viajes incluyen transporte y alojamiento?',
+		answer:
+			'Cada propuesta se arma según el destino. Podemos incluir transporte desde Medellín, alojamiento en la vereda y alimentación, o solo la guianza si prefieres organizarte por tu cuenta. Lo dejamos por escrito antes de confirmar.',
+	},
+	{
+		question: '¿Cómo se paga y qué pasa si llueve?',
+		answer:
+			'Se reserva con un abono del 30% y el saldo se paga al iniciar la salida. Si el clima impide la ruta, reprogramamos sin costo o devolvemos el abono. La decisión se toma con el guía el día anterior.',
+	},
+	{
+		question: '¿Puedo viajar con niños o con movilidad reducida?',
+		answer:
+			'Algunos destinos son aptos para familias con niños desde 6 años; otros exigen caminatas largas y terreno irregular. La ficha de cada destino indica la accesibilidad real, y en el formulario puedes contarnos tus condiciones para proponerte una alternativa.',
+	},
+	{
+		question: '¿Qué pasa con mis datos?',
+		answer:
+			'Usamos tus datos únicamente para responder esta consulta. No los compartimos con terceros ni los usamos para publicidad. Puedes pedir su eliminación escribiendo a nuestro correo de contacto.',
+	},
+];
+
+const schema = {
+	'@context': 'https://schema.org',
+	'@type': 'ContactPage',
+	name: 'Contacto · Antioquia Silvestre',
+	url: `${site.url}/contacto`,
+	description:
+		'Escribe a Antioquia Silvestre para planear un viaje de ecoturismo por Antioquia: rutas, fechas, grupos y recomendaciones.',
+	mainEntity: {
+		'@type': 'Organization',
+		name: site.name,
+		email: site.email,
+		telephone: `+${site.whatsapp}`,
+		areaServed: 'Antioquia, Colombia',
+	},
+};
+---
+
+<Layout
+	title="Contacto"
+	description="Planifica tu viaje de ecoturismo por Antioquia con Antioquia Silvestre. Escríbenos por formulario o WhatsApp y recibe una propuesta de ruta a tu medida."
+	schema={schema}
+>
+	<section class="border-b border-line/70 bg-surface/50">
+		<div class="container-page py-14 md:py-20">
+			<Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'Contacto' }]} />
+
+			<div class="mt-8 grid gap-8 lg:grid-cols-[1.3fr_0.7fr] lg:items-end">
+				<div>
+					<p class="eyebrow text-accent">Hablemos</p>
+					<h1 class="mt-4 max-w-3xl text-h1 font-medium text-ink">
+						Un viaje empieza con una conversación.
+					</h1>
+					<p class="measure mt-5 text-lead text-muted">
+						Cuéntanos cuántos días tienes, con quién viajas y qué te gustaría ver. Te respondemos con
+						una propuesta concreta: ruta, fechas y una idea clara de lo que cuesta.
+					</p>
+				</div>
+
+				<dl class="grid grid-cols-2 gap-4 border-t border-line pt-5 lg:border-t-0 lg:border-l lg:pl-8 lg:pt-0">
+					<div>
+						<dt class="text-[0.68rem] uppercase tracking-[0.12em] text-muted">Respuesta</dt>
+						<dd class="font-display text-3xl text-brand">1 día</dd>
+					</div>
+					<div>
+						<dt class="text-[0.68rem] uppercase tracking-[0.12em] text-muted">Grupos</dt>
+						<dd class="font-display text-3xl text-brand">1–10</dd>
+					</div>
+				</dl>
+
+				<p class="mt-4 flex items-start gap-2 text-[0.72rem] leading-snug text-muted lg:col-span-2 lg:mt-5">
+					<Icon name="clock" size={14} class="mt-0.5 shrink-0 text-ochre" />
+					<span>{site.schedule} · {site.location}</span>
+				</p>
+			</div>
+		</div>
+	</section>
+
+	<section class="container-page py-12 md:py-16">
+		<ContactForm destinos={destinos} />
+	</section>
+
+	<section class="border-t border-line/70 bg-surface/40">
+		<div class="container-page py-section">
+			<div class="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+				<div>
+					<p class="eyebrow text-accent">Antes de escribir</p>
+					<h2 class="mt-3 text-h2 font-medium text-ink">Preguntas frecuentes</h2>
+					<p class="mt-4 text-body text-muted">
+						Si tu duda no está aquí, escríbenos: contestamos correos y mensajes en horario de
+						atención.
+					</p>
+				</div>
+
+				<div class="divide-y divide-line/70 border-y border-line/70">
+					{
+						faqs.map((faq) => (
+							<details class="group py-5">
+								<summary class="flex cursor-pointer list-none items-start justify-between gap-4 text-left font-display text-lg font-medium text-ink marker:hidden">
+									{faq.question}
+									<span class="mt-0.5 grid size-7 shrink-0 place-items-center rounded-full border border-line text-muted transition-transform duration-300 group-open:rotate-45">
+										<Icon name="plus" size={14} />
+									</span>
+								</summary>
+								<p class="mt-3 max-w-2xl text-small leading-relaxed text-muted">{faq.answer}</p>
+							</details>
+						))
+					}
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="container-page pb-section">
+		<div class="flex flex-col items-start justify-between gap-4 rounded-panel border border-ochre/30 bg-bird-soft/40 p-6 sm:flex-row sm:items-center">
+			<p class="flex items-start gap-3 text-small text-ink/80">
+				<Icon name="alert" size={18} class="mt-0.5 shrink-0 text-ochre" />
+				<span>{site.demoNotice}</span>
+			</p>
+			<a href="/creditos" class="shrink-0 text-small font-semibold text-brand underline">
+				Ver créditos del sitio
+			</a>
+		</div>
+	</section>
+</Layout>

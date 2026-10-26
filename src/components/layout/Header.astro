@@ -1,0 +1,136 @@
+---
+import { site } from '../../data/site';
+import { cn, whatsappLink } from '../../lib/utils';
+import Button from '../ui/Button.astro';
+import Icon from '../ui/Icon.astro';
+import ThemeToggle from '../ui/ThemeToggle.astro';
+
+const path = Astro.url.pathname;
+const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+const reserveLink = whatsappLink(
+	'Hola, quiero información para reservar una experiencia de ecoturismo en Antioquia.',
+	site.whatsapp,
+);
+---
+
+<header
+	data-site-header
+	class="sticky top-0 z-50 border-b border-line/60 bg-canvas/85 backdrop-blur-md transition-shadow duration-300 data-[scrolled]:shadow-[0_10px_30px_-24px_rgb(20_32_26/0.55)]"
+>
+	<div class="container-page flex h-16 items-center justify-between gap-3 md:h-20">
+		<a href="/" class="group flex items-center gap-2.5 rounded-lg focus-visible:outline-2">
+			<span
+				class="grid size-10 place-items-center rounded-full bg-brand text-on-brand transition-transform duration-300 group-hover:-rotate-6"
+			>
+				<svg viewBox="0 0 32 32" class="size-6" aria-hidden="true" fill="none">
+					<path d="M16 27c0-7 4-12 11-13 0 7-4 12-11 13Z" fill="currentColor" opacity=".55" />
+					<path d="M16 27C9 27 5 22 5 15c7 0 11 5 11 12Z" fill="currentColor" opacity=".85" />
+					<path
+						d="M7 25c3-7 8-12 16-17"
+						stroke="currentColor"
+						stroke-width="1.6"
+						stroke-linecap="round"
+					/>
+				</svg>
+			</span>
+			<span class="leading-none">
+				<span class="block font-display text-[1.15rem] font-semibold tracking-tight text-ink">
+					Antioquia
+				</span>
+				<span class="mt-1 block text-[0.58rem] font-bold uppercase tracking-[0.32em] text-muted">
+					Silvestre
+				</span>
+			</span>
+		</a>
+
+		<nav aria-label="Navegación principal" class="hidden items-center gap-1 lg:flex">
+			{
+				site.nav.map((item) => (
+					<a
+						href={item.href}
+						aria-current={isActive(item.href) ? 'page' : undefined}
+						class={cn(
+							'relative rounded-full px-3.5 py-2 text-small font-semibold transition-colors',
+							isActive(item.href)
+								? 'text-brand'
+								: 'text-ink/75 hover:bg-surface/70 hover:text-ink',
+						)}
+					>
+						{item.label}
+						{isActive(item.href) && (
+							<span class="absolute inset-x-3.5 -bottom-0.5 h-0.5 rounded-full bg-accent" />
+						)}
+					</a>
+				))
+			}
+		</nav>
+
+		<div class="flex items-center gap-2">
+			<ThemeToggle />
+			<span class="hidden md:inline-flex">
+				<Button href={reserveLink} target="_blank" rel="noopener noreferrer" size="sm">
+					Reservar
+					<Icon name="arrow-up-right" size={15} />
+				</Button>
+			</span>
+			<button
+				type="button"
+				data-menu-open
+				aria-expanded="false"
+				aria-controls="mobile-menu"
+				aria-label="Abrir menú"
+				class="inline-flex size-11 items-center justify-center rounded-full border border-line/70 text-ink transition-colors hover:bg-surface lg:hidden"
+			>
+				<Icon name="menu" size={20} />
+			</button>
+		</div>
+	</div>
+</header>
+
+<dialog
+	id="mobile-menu"
+	class="m-0 h-dvh max-h-none w-full max-w-none bg-canvas p-0 text-ink backdrop:bg-ink/60 lg:hidden"
+>
+	<div class="flex h-full flex-col">
+		<div class="flex h-16 items-center justify-between border-b border-line/60 px-[var(--spacing-gutter)]">
+			<span class="font-display text-lg font-semibold">Antioquia Silvestre</span>
+			<button
+				type="button"
+				data-menu-close
+				aria-label="Cerrar menú"
+				class="inline-flex size-11 items-center justify-center rounded-full border border-line/70 text-ink hover:bg-surface"
+			>
+				<Icon name="close" size={20} />
+			</button>
+		</div>
+
+		<nav aria-label="Navegación móvil" class="flex flex-1 flex-col gap-1 px-[var(--spacing-gutter)] py-8">
+			{
+				site.nav.map((item) => (
+					<a
+						href={item.href}
+						aria-current={isActive(item.href) ? 'page' : undefined}
+						class={cn(
+							'flex items-center justify-between border-b border-line/50 py-4 font-display text-3xl transition-colors',
+							isActive(item.href) ? 'text-brand' : 'text-ink hover:text-brand',
+						)}
+					>
+						{item.label}
+						<Icon name="arrow-up-right" size={22} class="text-muted" />
+					</a>
+				))
+			}
+		</nav>
+
+		<div class="mt-auto space-y-3 border-t border-line/60 px-[var(--spacing-gutter)] py-6">
+			<Button href={reserveLink} target="_blank" rel="noopener noreferrer" class="w-full" icon="whatsapp">
+				Reservar por WhatsApp
+			</Button>
+			<p class="text-center text-small text-muted">{site.location} · {site.schedule}</p>
+		</div>
+	</div>
+</dialog>
+
+<script>
+	import '../../scripts/menu';
+</script>

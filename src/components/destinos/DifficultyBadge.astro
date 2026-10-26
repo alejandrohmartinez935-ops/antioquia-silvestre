@@ -1,0 +1,25 @@
+---
+import { difficultyMeta } from '../../lib/content';
+import { cn } from '../../lib/utils';
+import Icon from '../ui/Icon.astro';
+
+interface Props {
+	difficulty: keyof typeof difficultyMeta;
+	class?: string;
+	showIcon?: boolean;
+}
+
+const { difficulty, class: className, showIcon = true } = Astro.props;
+const meta = difficultyMeta[difficulty];
+---
+
+<span
+	class={cn(
+		'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[0.7rem] font-bold uppercase tracking-[0.08em]',
+		meta.style,
+		className,
+	)}
+>
+	{showIcon && <Icon name="mountain" size={13} strokeWidth={2} />}
+	{meta.label}
+</span>
