@@ -536,6 +536,7 @@ El primer despliegue en Vercel quedó publicado en `https://antioquia-silvestre.
 - `robots.txt` pasó de archivo estático a endpoint (`src/pages/robots.txt.ts`) para citar el sitemap del despliegue actual.
 - El sitemap excluye `/gracias`, que es `noindex`.
 - Verificado en build con `VERCEL_PROJECT_PRODUCTION_URL`: canonical, Open Graph, JSON-LD, `robots.txt` y sitemap resuelven a `https://antioquia-silvestre.vercel.app`.
+- El workflow de CI fallaba en ~8 s porque el runner traía Node 22.23.3 y Astro 7 exige `>=22.23.4`; se añadió `actions/setup-node` con Node 24.
 
 ---
 
