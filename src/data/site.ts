@@ -1,9 +1,21 @@
+import { resolveSiteUrl } from '../lib/site-url.mjs';
+
+// `import.meta.env` solo expone variables `PUBLIC_*`; las de Vercel viven en
+// `process.env` durante el build. El resultado debe coincidir con `site` en
+// `astro.config.mjs` (canonical, sitemap y JSON-LD).
+const buildEnv = (
+	globalThis as { process?: { env?: Record<string, string | undefined> } }
+).process?.env;
+
 export const site = {
 	name: 'Antioquia Silvestre',
 	tagline: 'Antioquia, contada por su territorio',
 	description:
 		'Guía de ecoturismo por Antioquia: destinos, cascadas, aviturismo, rutas de senderismo e itinerarios para viajar con calma y con guías locales.',
-	url: import.meta.env.PUBLIC_SITE_URL ?? 'https://antioquiasilvestre.co',
+	url: resolveSiteUrl({
+		...buildEnv,
+		PUBLIC_SITE_URL: import.meta.env.PUBLIC_SITE_URL ?? buildEnv?.PUBLIC_SITE_URL,
+	}),
 	whatsapp: import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? '573001234567',
 	email: import.meta.env.PUBLIC_CONTACT_EMAIL ?? 'hola@antioquiasilvestre.co',
 	phoneDisplay: '+57 300 123 4567',

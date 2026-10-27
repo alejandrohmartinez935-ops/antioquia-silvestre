@@ -1,5 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /gracias
-
-Sitemap: https://antioquiasilvestre.co/sitemap-index.xml

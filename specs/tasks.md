@@ -345,10 +345,13 @@
   - **Archivos:** `astro.config.mjs`, `package.json`.
   ```js
   import vercel from '@astrojs/vercel';
-  export default defineConfig({
-    site: process.env.PUBLIC_SITE_URL ?? 'https://antioquiasilvestre.co',
-    adapter: vercel(),
-    // output: 'static' por defecto; /api/contacto usa prerender = false
+  export default defineConfig(({ mode }) => {
+    const env = loadEnv(mode, process.cwd(), '');
+    return {
+      site: resolveSiteUrl(env), // PUBLIC_SITE_URL → dominio de Vercel → ejemplo
+      adapter: vercel(),
+      // output: 'static' por defecto; /api/contacto usa prerender = false
+    };
   });
   ```
   - **Aceptación:** build local genera salida compatible; endpoint responde en `astro dev`.
@@ -522,6 +525,17 @@ Auditorías ejecutadas sobre el build de producción servido en local (`.vercel/
 - Preload de Fraunces y Manrope: elimina el desplazamiento de fuente (CLS 0,052 → 0).
 
 **Pendiente de esta fase:** Lighthouse de rendimiento y Web Vitals sobre la URL real (T-1002), zoom 200 % y lector de pantalla (T-1003), y matriz en Firefox/Safari (T-1001).
+
+### Corrección post-despliegue (2026-10-26)
+
+El primer despliegue en Vercel quedó publicado en `https://antioquia-silvestre.vercel.app`, pero canonical, `og:url`, `og:image`, JSON-LD, `robots.txt` y sitemap seguían apuntando al dominio de ejemplo `https://antioquiasilvestre.co`, que no está publicado.
+
+- `src/lib/site-url.mjs` centraliza la resolución: `PUBLIC_SITE_URL` → `VERCEL_PROJECT_PRODUCTION_URL` → `VERCEL_URL` → dominio de ejemplo.
+- `astro.config.mjs` lee `.env` con `loadEnv` y pasa la URL a `site`, de modo que el sitemap usa el dominio real.
+- `src/data/site.ts` aplica la misma resolución para el JSON-LD.
+- `robots.txt` pasó de archivo estático a endpoint (`src/pages/robots.txt.ts`) para citar el sitemap del despliegue actual.
+- El sitemap excluye `/gracias`, que es `noindex`.
+- Verificado en build con `VERCEL_PROJECT_PRODUCTION_URL`: canonical, Open Graph, JSON-LD, `robots.txt` y sitemap resuelven a `https://antioquia-silvestre.vercel.app`.
 
 ---
 

@@ -49,7 +49,7 @@ Copia `.env.example` como `.env` y ajusta los valores:
 
 | Variable                | Uso                                                              |
 | :---------------------- | :--------------------------------------------------------------- |
-| `PUBLIC_SITE_URL`       | URL canónica, sitemap y metadatos Open Graph.                    |
+| `PUBLIC_SITE_URL`       | Opcional: fuerza la URL canónica, el sitemap y Open Graph. Si se omite, en Vercel se detecta el dominio del despliegue. |
 | `PUBLIC_WHATSAPP_NUMBER`| Número internacional sin `+` ni espacios.                        |
 | `PUBLIC_CONTACT_EMAIL`  | Correo visible en el sitio.                                      |
 | `RESEND_API_KEY`        | API key de Resend. Sin ella, el formulario ofrece WhatsApp.      |

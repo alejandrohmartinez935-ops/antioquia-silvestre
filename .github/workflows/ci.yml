@@ -24,5 +24,3 @@ jobs:
 
       - name: Compilar sitio
         run: bun run build
-        env:
-          PUBLIC_SITE_URL: https://antioquiasilvestre.co
