@@ -79,9 +79,10 @@ Las cadenas que contienen `: ` deben ir entre comillas en el YAML.
 
 ## Despliegue
 
-1. Conecta el repositorio en Vercel (framework detectado: Astro).
-2. Define las variables de entorno del proyecto.
-3. Cada push a `main` ejecuta el workflow de `.github/workflows/ci.yml` antes de desplegar.
+1. Conecta el repositorio en Vercel (framework detectado: Astro) y confirma que la rama de producción es `main`.
+2. Define las variables de entorno del proyecto. Todas son opcionales: sin `PUBLIC_SITE_URL`, el canonical, el sitemap y `robots.txt` usan el dominio del despliegue de Vercel.
+3. Cada push a `main` ejecuta el workflow de `.github/workflows/ci.yml`.
+4. Si el proyecto no está conectado a Git, redespliega desde el panel de Vercel (`Deployments → Redeploy`) después de cada cambio para publicar la última versión.
 
 ## Accesibilidad y rendimiento
 
